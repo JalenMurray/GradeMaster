@@ -3,12 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@aws-amplify/ui-react": "^6.1.8",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "aws-amplify": "^6.2.0",
+    "bootstrap": "^5.3.3",
     "react": "^18.3.1",
+    "react-bootstrap": "^2.10.2",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.51.3",
+    "react-router-dom": "^6.23.0",
     "react-scripts": "5.0.1",
+    "react-toastify": "^10.0.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -19,9 +26,34 @@
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+      "airbnb",
+      "airbnb/hooks"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 9,
+      "sourceType": "module"
+    },
+    "env": {
+      "node": true,
+      "es6": true
+    },
+    "ignorePatterns": [
+      "./node_modules/**/*"
+    ],
+    "rules": {
+      "comma-dangle": 0,
+      "react/prop-types": 0,
+      "react/react-in-jsx-scope": 0,
+      "react/button-has-type": 0,
+      "react/jsx-one-expression-per-line": 0,
+      "operator-linebreak": 0,
+      "linebreak-style": 0,
+      "no-unused-vars": 1,
+      "react/function-component-definition": 0,
+      "react/jsx-props-no-spreading": 0,
+      "jsx-a11y/label-has-associated-control": 0,
+      "object-curly-newline": 0
+    }
   },
   "browserslist": {
     "production": [
@@ -34,5 +66,16 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "daisyui": "^4.10.2",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "postcss": "^8.4.38",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-preset-env": "^9.5.9",
+    "tailwindcss": "^3.4.3"
   }
 }

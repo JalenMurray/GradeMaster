@@ -1,0 +1,138 @@
+{
+  "api": {
+    "grademaster": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "grademaster"
+        }
+      ],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            },
+            {
+              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+              "userPoolConfig": {
+                "userPoolId": "authgrademaster"
+              }
+            }
+          ],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 30,
+              "description": "api key description"
+            },
+            "authenticationType": "API_KEY"
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
+  "auth": {
+    "grademaster": {
+      "customAuth": false,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "serviceType": "imported"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_auth_grademaster_allowUnauthenticatedIdentities": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "grademaster"
+        }
+      ]
+    },
+    "AMPLIFY_auth_grademaster_authRoleArn": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "grademaster"
+        }
+      ]
+    },
+    "AMPLIFY_auth_grademaster_authRoleName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "grademaster"
+        }
+      ]
+    },
+    "AMPLIFY_auth_grademaster_identityPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "grademaster"
+        }
+      ]
+    },
+    "AMPLIFY_auth_grademaster_identityPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "grademaster"
+        }
+      ]
+    },
+    "AMPLIFY_auth_grademaster_nativeClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "grademaster"
+        }
+      ]
+    },
+    "AMPLIFY_auth_grademaster_unauthRoleArn": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "grademaster"
+        }
+      ]
+    },
+    "AMPLIFY_auth_grademaster_unauthRoleName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "grademaster"
+        }
+      ]
+    },
+    "AMPLIFY_auth_grademaster_userPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "grademaster"
+        }
+      ]
+    },
+    "AMPLIFY_auth_grademaster_userPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "grademaster"
+        }
+      ]
+    },
+    "AMPLIFY_auth_grademaster_webClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "grademaster"
+        }
+      ]
+    }
+  }
+}

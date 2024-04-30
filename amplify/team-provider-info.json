@@ -1,0 +1,35 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-grademaster-dev-6289d-authRole",
+      "UnauthRoleArn": "arn:aws:iam::851725160507:role/amplify-grademaster-dev-6289d-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::851725160507:role/amplify-grademaster-dev-6289d-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-grademaster-dev-6289d-deployment",
+      "UnauthRoleName": "amplify-grademaster-dev-6289d-unauthRole",
+      "StackName": "amplify-grademaster-dev-6289d",
+      "StackId": "arn:aws:cloudformation:us-east-1:851725160507:stack/amplify-grademaster-dev-6289d/3e17d0f0-0660-11ef-9592-12517e33e283",
+      "AmplifyAppId": "d2xpu7dkk6x34x"
+    },
+    "categories": {
+      "auth": {
+        "grademaster": {
+          "userPoolId": "us-east-1_icp82RPCe",
+          "userPoolName": "grademaster-staging",
+          "webClientId": "60q9nvud0p3ius94q7fc7oh1fu",
+          "nativeClientId": "60q9nvud0p3ius94q7fc7oh1fu",
+          "identityPoolId": "us-east-1:13de54dd-1a91-4851-9efb-c58ac7403bc5",
+          "identityPoolName": "testAuthIdentityPool__staging",
+          "allowUnauthenticatedIdentities": false,
+          "authRoleArn": "arn:aws:iam::851725160507:role/amplify-grademaster-staging-b529e-authRole",
+          "authRoleName": "amplify-grademaster-staging-b529e-authRole",
+          "unauthRoleArn": "arn:aws:iam::851725160507:role/amplify-grademaster-staging-b529e-unauthRole",
+          "unauthRoleName": "amplify-grademaster-staging-b529e-unauthRole"
+        }
+      },
+      "api": {
+        "grademaster": {}
+      }
+    }
+  }
+}
