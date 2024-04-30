@@ -3,7 +3,7 @@ import Menu from './Menu';
 
 function SideDrawer() {
   return (
-    <div className="drawer-side z-40">
+    <div className="drawer-side z-40 border-r-2 border-neutral">
       <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay" />
       <aside className="min-h-screen w-80">
         <div className="sticky top-0 z-20 mb-4">
