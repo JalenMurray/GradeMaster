@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { generateClient } from 'aws-amplify/api';
 import { createSemester } from '../graphql/mutations';
 import { listSemesters } from '../graphql/queries';
+import SemesterCreateForm from '../ui-components/SemesterCreateForm';
+
+import { listSemestersPromise } from '../utils/queryPromises';
 
 async function handleFetchUserAttributes() {
   try {
@@ -14,39 +18,48 @@ async function handleFetchUserAttributes() {
     return null;
   }
 }
+const client = generateClient();
+
+const fetchSemesters = async () => {
+  const result = await client.graphql({ query: listSemesters, authMode: 'userPool' });
+  return result.data.listSemesters.items;
+};
 
 const Playground = () => {
+  const { data: semesters, isLoading } = useQuery({
+    queryKey: ['semesters'],
+    queryFn: fetchSemesters,
+    initialData: [],
+  });
   const currYear = new Date().getFullYear();
   const [formData, setFormData] = useState({
     season: 'SPRING',
     year: currYear,
     current: true,
   });
-  const [semesters, setSemesters] = useState(null);
-  const client = generateClient();
 
-  useEffect(() => {
-    const fetchSemesters = async () => {
-      try {
-        const results = await client.graphql({ query: listSemesters });
-        setSemesters(results.data.listSemesters.items);
-        console.log(results.data.listSemesters.items);
-      } catch (error) {
-        console.error('Error fetching semesters', error);
-      }
-    };
-    fetchSemesters();
-  }, [client]);
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-4 w-52">
+        <div className="skeleton h-32 w-full" />
+        <div className="skeleton h-4 w-28" />
+        <div className="skeleton h-4 w-full" />
+        <div className="skeleton h-4 w-full" />
+      </div>
+    );
+  }
 
-  const updateSemesters = async () => {
-    try {
-      const results = await client.graphql({ query: listSemesters });
-      setSemesters(results.data.listSemesters.items);
-      console.log(results.data.listSemesters.items);
-    } catch (error) {
-      console.error('Error fetching semesters', error);
-    }
-  };
+  console.log(semesters);
+
+  // const updateSemesters = async () => {
+  //   try {
+  //     const results = await client.graphql({ query: listSemesters, authMode: 'userPool' });
+  //     setSemesters(results.data.listSemesters.items);
+  //     console.log(results.data.listSemesters.items);
+  //   } catch (error) {
+  //     console.error('Error fetching semesters', error);
+  //   }
+  // };
 
   const submitNewSemester = async () => {
     try {
@@ -55,9 +68,11 @@ const Playground = () => {
         variables: {
           input: formData,
         },
+        authMode: 'userPool',
       });
-    } catch (error) {
-      console.error('Error adding semester', error);
+      console.log('SEMESTER ADDED!!!!');
+    } catch (err) {
+      console.error('Error adding semester', err);
     }
   };
 
@@ -112,9 +127,11 @@ const Playground = () => {
             </div>
 
             <div className="mt-4 p-4">
-              <button className="btn btn-primary btn-wide" onClick={submitNewSemester}>
-                Submit
-              </button>
+              <form method="dialog">
+                <button className="btn btn-primary btn-wide" onClick={submitNewSemester}>
+                  Submit
+                </button>
+              </form>
             </div>
           </div>
           <form method="dialog" className="modal-backdrop">
@@ -124,9 +141,6 @@ const Playground = () => {
       </div>
       <div>
         <h1>Semesters:</h1>
-        <button className="btn" onClick={updateSemesters}>
-          Update Semesters
-        </button>
         <ul>
           {semesters &&
             semesters.map((semester) => (
@@ -136,6 +150,7 @@ const Playground = () => {
             ))}
         </ul>
       </div>
+      <SemesterCreateForm onError={(modelFields, messages) => console.log(messages)} />
     </div>
   );
 };
