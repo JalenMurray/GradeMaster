@@ -1,6 +1,7 @@
 import { AccountBox } from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
 import { fetchUserAttributes } from 'aws-amplify/auth';
+import { Link } from 'react-router-dom';
 
 const getUserData = async () => {
   const userAttributes = await fetchUserAttributes();
@@ -17,16 +18,21 @@ function AccountNavButton() {
 
   if (isLoading) {
     return (
-      <a href="/" disabled className="btn btn-ghost drawer-button font-normal" aria-label="Loading">
+      <Link
+        to="./"
+        disabled
+        className="btn btn-ghost drawer-button font-normal"
+        aria-label="Loading"
+      >
         <span className="loading loading-dots loading-md" />
-      </a>
+      </Link>
     );
   }
 
   return (
-    <a href="/account" className="btn btn-ghost drawer-button font-normal">
+    <Link to="/account" className="btn btn-ghost drawer-button font-normal">
       <AccountBox /> {user.name}
-    </a>
+    </Link>
   );
 }
 

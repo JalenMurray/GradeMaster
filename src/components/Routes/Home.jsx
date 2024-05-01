@@ -2,7 +2,7 @@ import Logo from '../../assets/logo.png';
 
 function Home() {
   return (
-    <div className="hero min-h-screen">
+    <div className="hero min-h-[90vh]">
       <div className="hero-content flex-col lg:flex-row-reverse">
         <img src={Logo} className="max-w-sm rounded-lg shadow-2xl" alt="GradeMasterLogo" />
         <div>

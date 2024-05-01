@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/api';
-import { createSemester } from '../graphql/mutations';
+import { createSemester } from '../../graphql/mutations';
 
 const client = generateClient();
 

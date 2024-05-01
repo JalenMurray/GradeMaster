@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/api';
 import { listSemesters } from '../../graphql/queries';
-import { onCreateSemester, onDeleteSemester, onUpdateSemester } from '../../graphql/subscriptions';
 
 import SemesterMenuItem from './SemesterMenuItem';
 
@@ -14,7 +12,6 @@ const fetchSemesters = async () => {
 };
 
 function Menu() {
-  const queryClient = useQueryClient();
   const queryKey = ['semesters'];
   const { data: semesters, isLoading } = useQuery({
     queryKey,
@@ -22,60 +19,14 @@ function Menu() {
     initialData: [],
   });
 
-  useEffect(() => {
-    const createSub = client
-      .graphql({ query: onCreateSemester, type: 'subscription', authMode: 'userPool' })
-      .subscribe({
-        next: ({ value }) => {
-          queryClient.setQueryData(queryKey, (current) => {
-            const toCreateIndex = current.findIndex(
-              (item) => item.id === value.data.onCreateSemester.id
-            );
-            if (toCreateIndex) {
-              return current;
-            }
-            return [...current, value.data.onCreateSemester];
-          });
-        },
-      });
-    const updateSub = client
-      .graphql({ query: onUpdateSemester, type: 'subscription', authMode: 'userPool' })
-      .subscribe({
-        next: ({ value }) => {
-          queryClient.setQueryData(queryKey, (current) => {
-            const toUpdateIndex = current.findIndex(
-              (item) => item.id === value.data.onUpdateSemester.id
-            );
-            if (toUpdateIndex === -1) {
-              return [...current, value.data.onCreateSemester];
-            }
-            return [
-              ...current.slice(0, toUpdateIndex),
-              value.data.onUpdateSemester,
-              ...current.slice(toUpdateIndex + 1),
-            ];
-          });
-        },
-      });
-    const deleteSub = client
-      .graphql({ query: onDeleteSemester, type: 'subscription', authMode: 'userPool' })
-      .subscribe({
-        next: ({ value }) => {
-          queryClient.setQueryData(queryKey, (current) => {
-            const toDeleteIndex = current.findIndex(
-              (item) => item.id === value.data.onDeleteSemester.id
-            );
-            return [...current.slice(0, toDeleteIndex), ...current.slice(toDeleteIndex + 1)];
-          });
-        },
-      });
-    return () => {
-      createSub.unsubscribe();
-      updateSub.unsubscribe();
-      deleteSub.unsubscribe();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const seasonOrder = { WINTER: 1, SPRING: 2, SUMMER: 3, FALL: 4 };
+
+  const sortSemesters = (a, b) => {
+    if (a.year !== b.year) {
+      return b.year - a.year;
+    }
+    return seasonOrder[b.season] - seasonOrder[a.season];
+  };
 
   if (isLoading) {
     return (
@@ -102,7 +53,7 @@ function Menu() {
             </button>
           </li>
           {semesters &&
-            semesters.map((semester) => (
+            semesters.sort(sortSemesters).map((semester) => (
               <li key={semester.id}>
                 <SemesterMenuItem semester={semester} />
               </li>
