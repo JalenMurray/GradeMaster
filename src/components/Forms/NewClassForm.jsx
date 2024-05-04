@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/api';
+import { TwitterPicker } from 'react-color';
 import { createClass } from '../../graphql/mutations';
 
 const client = generateClient();
@@ -16,6 +17,10 @@ function NewClassForm() {
     displayColor: '#00CDB7',
   });
   const [queryKey, setQueryKey] = useState(null);
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
   useEffect(() => {
     setQueryKey([`${formData.classSemesterId}-classes`]);
@@ -112,6 +117,43 @@ function NewClassForm() {
             value={formData.units}
             onChange={(e) => setFormData({ ...formData, units: e.target.value })}
             onFocus={(e) => e.target.select()}
+          />
+        </label>
+        <label className="form-control w-full">
+          <div className="label">
+            <span className="label-text">Display Color</span>
+          </div>
+          <TwitterPicker
+            color={formData.displayColor}
+            onChangeComplete={(color) => setFormData({ ...formData, displayColor: color.hex })}
+            width="100%"
+            triangle="hide"
+            colors={[
+              '#0000FF', // Blue
+              '#FF0000', // Red
+              '#008000', // Green
+              '#800080', // Purple
+              '#FFFF00', // Yellow
+              '#FFA500', // Orange
+              '#FFC0CB', // Pink
+              '#40E0D0', // Turquoise
+              '#A52A2A', // Brown
+              '#808080', // Gray
+              '#FF1493', // Deep Pink
+              '#00FFFF', // Cyan
+              '#FF6347', // Tomato
+              '#7FFF00', // Chartreuse
+              '#800000', // Maroon
+              '#4682B4', // Steel Blue
+              '#FFD700', // Gold
+              '#7FFFD4', // Aquamarine
+              '#9932CC', // Dark Orchid
+              '#FF4500', // Orange Red
+              '#00FF00', // Lime Green
+              '#8A2BE2', // Blue Violet
+              '#008080', // Teal
+              '#FF00FF', // Magenta
+            ]}
           />
         </label>
       </div>

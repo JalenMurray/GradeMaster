@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/api';
 import { getSemester } from '../../graphql/queries';
 import { formatSeason, getSemesterStr } from '../../utils/format';
-import ClassCard from '../ClassCard';
+import ClassCard from '../ClassComponents/ClassCard';
 
 const client = generateClient();
 

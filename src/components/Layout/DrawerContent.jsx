@@ -7,6 +7,7 @@ import Home from '../Routes/Home';
 import NewClassForm from '../Forms/NewClassForm';
 import Semester from '../Routes/Semester';
 import Class from '../Routes/Class';
+import NewAssignmentTypeForm from '../Forms/NewAssignmentTypeForm';
 
 function DrawerContent() {
   return (
@@ -26,6 +27,9 @@ function DrawerContent() {
       </BaseModal>
       <BaseModal id="new_class_modal" otherProps="items-center max-w-3xl">
         <NewClassForm />
+      </BaseModal>
+      <BaseModal id="new_assignment_type_modal" otherProps="items-center max-w-3xl">
+        <NewAssignmentTypeForm />
       </BaseModal>
     </div>
   );
