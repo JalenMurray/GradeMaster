@@ -6,6 +6,7 @@ import Account from '../Routes/Account';
 import Home from '../Routes/Home';
 import NewClassForm from '../Forms/NewClassForm';
 import Semester from '../Routes/Semester';
+import Class from '../Routes/Class';
 
 function DrawerContent() {
   return (
@@ -15,6 +16,7 @@ function DrawerContent() {
         <Route path="/" element={<Home />} />
         <Route path="/account" element={<Account />} />
         <Route path="/semester/:semesterId" element={<Semester />} />
+        <Route path="/class/:classId" element={<Class />} />
       </Routes>
       {/*
         Modals Placed Here so they are in center of screen.  Buttons to open are placed elsewhere

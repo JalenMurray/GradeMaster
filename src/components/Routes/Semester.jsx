@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/api';
@@ -10,6 +11,21 @@ const client = generateClient();
 function Semester() {
   const { semesterId } = useParams();
   const queryClient = useQueryClient();
+  const [classes, setClasses] = useState([]);
+
+  useEffect(() => {
+    const unsubscribe = queryClient.getQueryCache().subscribe((e) => {
+      const key = e.query.queryKey;
+      const expectedKey = [`${semesterId}-classes`];
+      if (key[0] === expectedKey[0]) {
+        setClasses(e.query.state.data);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [queryClient, semesterId]);
 
   const fetchSemester = async () => {
     const result = await client.graphql({
@@ -21,13 +37,18 @@ function Semester() {
   };
 
   const queryKey = ['semester'];
-  const { data: semester, isLoading } = useQuery({
+  const { data: semester, refetch } = useQuery({
     queryKey,
     queryFn: fetchSemester,
-    initialData: {},
+    initialData: undefined,
   });
 
-  if (Object.keys(semester).length === 0) {
+  useEffect(() => {
+    refetch();
+    setClasses(queryClient.getQueryData([`${semesterId}-classes`]));
+  }, [semesterId, refetch, queryClient]);
+
+  if (!semester) {
     return (
       <div className="w-full max-w-4xl flex-grow pt-10">
         <div className="flex flex-col gap-4 w-1/2">
@@ -40,14 +61,9 @@ function Semester() {
     );
   }
 
-  const classes = queryClient.getQueryData([`${semesterId}-classes`]);
-  if (!classes) {
-    queryClient.invalidateQueries([`${semesterId}-classes`]);
-  }
-
   return (
     <div className="w-full max-w-7xl flex-grow pt-10">
-      <h1 className="text-5xl">{getSemesterStr(semester)}</h1>
+      <h1 className="text-5xl">{semester.season && getSemesterStr(semester)}</h1>
       <h2 className="mt-4 text-2xl flex gap-4 align-center">
         Semester Information
         <button className="btn btn-sm btn-outline btn-primary ml-4">Edit</button>
@@ -60,7 +76,7 @@ function Semester() {
           <input
             type="text"
             className="input input-bordered w-full"
-            value={formatSeason(semester.season)}
+            value={semester.season && formatSeason(semester.season)}
             disabled
           />
         </label>

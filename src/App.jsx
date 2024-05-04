@@ -1,6 +1,5 @@
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 // Amplify
 import { Amplify } from 'aws-amplify';
@@ -19,7 +18,6 @@ function App() {
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <Layout />
-        <ReactQueryDevtools initialIsOpen />
       </QueryClientProvider>
     </BrowserRouter>
   );

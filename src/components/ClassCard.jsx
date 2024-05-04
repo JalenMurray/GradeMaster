@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 
 function ClassCard({ cls }) {
-  console.log(cls);
   return (
     <div className="card card-side bg-base-200 shadow-xl w-full md:w-2/5">
       <figure className="w-10 h-full">

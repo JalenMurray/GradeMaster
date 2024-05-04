@@ -52,7 +52,7 @@ function SemesterMenuItem({ semester }) {
         {classes.length > 0 &&
           classes.map((cls) => (
             <li key={cls.id}>
-              <Link to="/" className="group">
+              <Link to={`/class/${cls.id}`} className="group">
                 <span>{cls.code}</span>
               </Link>
             </li>
