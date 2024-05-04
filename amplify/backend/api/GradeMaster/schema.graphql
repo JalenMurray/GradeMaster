@@ -1,0 +1,46 @@
+type Assignment @model @auth(rules: [{allow: owner}]) {
+  id: ID!
+  name: String!
+  score: Float
+  max_score: Float
+  weight: Float
+  assignmentType: AssignmentType @hasOne
+}
+
+type AssignmentType @model @auth(rules: [{allow: owner}]) {
+  id: ID!
+  name: String!
+  maxScore: Float
+  weight: Float
+  defaultName: String
+  lockWeights: Boolean
+  class: Class @hasOne
+  totalScore: Float
+  maxTotalScore: Float
+}
+
+type Class @model @auth(rules: [{allow: owner}]) {
+  id: ID!
+  code: String!
+  title: String!
+  score: Float
+  semester: Semester @hasOne
+  desiredScore: Float
+  displayColor: String
+  units: Int!
+}
+
+enum Season {
+  SPRING
+  SUMMER
+  FALL
+  WINTER
+}
+
+type Semester @model @auth(rules: [{allow: owner}]) {
+  id: ID!
+  season: Season
+  year: Int
+  current: Boolean
+}
+ 

@@ -45,9 +45,9 @@ export default function SemesterCreateForm(props) {
     setErrors({});
   };
   const validations = {
-    season: [{ type: "Required" }],
-    year: [{ type: "Required" }],
-    current: [{ type: "Required" }],
+    season: [],
+    year: [],
+    current: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -180,7 +180,7 @@ export default function SemesterCreateForm(props) {
       </SelectField>
       <TextField
         label="Year"
-        isRequired={true}
+        isRequired={false}
         isReadOnly={false}
         type="number"
         step="any"

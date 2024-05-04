@@ -6,12 +6,18 @@
 
 /* eslint-disable */
 import * as React from "react";
-import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
+import {
+  Button,
+  Flex,
+  Grid,
+  SwitchField,
+  TextField,
+} from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { createAssignment } from "../graphql/mutations";
+import { createAssignmentType } from "../graphql/mutations";
 const client = generateClient();
-export default function AssignmentCreateForm(props) {
+export default function AssignmentTypeCreateForm(props) {
   const {
     clearOnSuccess = true,
     onSuccess,
@@ -24,27 +30,45 @@ export default function AssignmentCreateForm(props) {
   } = props;
   const initialValues = {
     name: "",
-    score: "",
-    max_score: "",
+    maxScore: "",
     weight: "",
+    defaultName: "",
+    lockWeights: false,
+    totalScore: "",
+    maxTotalScore: "",
   };
   const [name, setName] = React.useState(initialValues.name);
-  const [score, setScore] = React.useState(initialValues.score);
-  const [max_score, setMax_score] = React.useState(initialValues.max_score);
+  const [maxScore, setMaxScore] = React.useState(initialValues.maxScore);
   const [weight, setWeight] = React.useState(initialValues.weight);
+  const [defaultName, setDefaultName] = React.useState(
+    initialValues.defaultName
+  );
+  const [lockWeights, setLockWeights] = React.useState(
+    initialValues.lockWeights
+  );
+  const [totalScore, setTotalScore] = React.useState(initialValues.totalScore);
+  const [maxTotalScore, setMaxTotalScore] = React.useState(
+    initialValues.maxTotalScore
+  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setName(initialValues.name);
-    setScore(initialValues.score);
-    setMax_score(initialValues.max_score);
+    setMaxScore(initialValues.maxScore);
     setWeight(initialValues.weight);
+    setDefaultName(initialValues.defaultName);
+    setLockWeights(initialValues.lockWeights);
+    setTotalScore(initialValues.totalScore);
+    setMaxTotalScore(initialValues.maxTotalScore);
     setErrors({});
   };
   const validations = {
     name: [{ type: "Required" }],
-    score: [],
-    max_score: [],
+    maxScore: [],
     weight: [],
+    defaultName: [],
+    lockWeights: [],
+    totalScore: [],
+    maxTotalScore: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -73,9 +97,12 @@ export default function AssignmentCreateForm(props) {
         event.preventDefault();
         let modelFields = {
           name,
-          score,
-          max_score,
+          maxScore,
           weight,
+          defaultName,
+          lockWeights,
+          totalScore,
+          maxTotalScore,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -106,7 +133,7 @@ export default function AssignmentCreateForm(props) {
             }
           });
           await client.graphql({
-            query: createAssignment.replaceAll("__typename", ""),
+            query: createAssignmentType.replaceAll("__typename", ""),
             variables: {
               input: {
                 ...modelFields,
@@ -126,7 +153,7 @@ export default function AssignmentCreateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "AssignmentCreateForm")}
+      {...getOverrideProps(overrides, "AssignmentTypeCreateForm")}
       {...rest}
     >
       <TextField
@@ -139,9 +166,12 @@ export default function AssignmentCreateForm(props) {
           if (onChange) {
             const modelFields = {
               name: value,
-              score,
-              max_score,
+              maxScore,
               weight,
+              defaultName,
+              lockWeights,
+              totalScore,
+              maxTotalScore,
             };
             const result = onChange(modelFields);
             value = result?.name ?? value;
@@ -157,43 +187,12 @@ export default function AssignmentCreateForm(props) {
         {...getOverrideProps(overrides, "name")}
       ></TextField>
       <TextField
-        label="Score"
-        isRequired={false}
-        isReadOnly={false}
-        type="number"
-        step="any"
-        value={score}
-        onChange={(e) => {
-          let value = isNaN(parseFloat(e.target.value))
-            ? e.target.value
-            : parseFloat(e.target.value);
-          if (onChange) {
-            const modelFields = {
-              name,
-              score: value,
-              max_score,
-              weight,
-            };
-            const result = onChange(modelFields);
-            value = result?.score ?? value;
-          }
-          if (errors.score?.hasError) {
-            runValidationTasks("score", value);
-          }
-          setScore(value);
-        }}
-        onBlur={() => runValidationTasks("score", score)}
-        errorMessage={errors.score?.errorMessage}
-        hasError={errors.score?.hasError}
-        {...getOverrideProps(overrides, "score")}
-      ></TextField>
-      <TextField
         label="Max score"
         isRequired={false}
         isReadOnly={false}
         type="number"
         step="any"
-        value={max_score}
+        value={maxScore}
         onChange={(e) => {
           let value = isNaN(parseFloat(e.target.value))
             ? e.target.value
@@ -201,22 +200,25 @@ export default function AssignmentCreateForm(props) {
           if (onChange) {
             const modelFields = {
               name,
-              score,
-              max_score: value,
+              maxScore: value,
               weight,
+              defaultName,
+              lockWeights,
+              totalScore,
+              maxTotalScore,
             };
             const result = onChange(modelFields);
-            value = result?.max_score ?? value;
+            value = result?.maxScore ?? value;
           }
-          if (errors.max_score?.hasError) {
-            runValidationTasks("max_score", value);
+          if (errors.maxScore?.hasError) {
+            runValidationTasks("maxScore", value);
           }
-          setMax_score(value);
+          setMaxScore(value);
         }}
-        onBlur={() => runValidationTasks("max_score", max_score)}
-        errorMessage={errors.max_score?.errorMessage}
-        hasError={errors.max_score?.hasError}
-        {...getOverrideProps(overrides, "max_score")}
+        onBlur={() => runValidationTasks("maxScore", maxScore)}
+        errorMessage={errors.maxScore?.errorMessage}
+        hasError={errors.maxScore?.hasError}
+        {...getOverrideProps(overrides, "maxScore")}
       ></TextField>
       <TextField
         label="Weight"
@@ -232,9 +234,12 @@ export default function AssignmentCreateForm(props) {
           if (onChange) {
             const modelFields = {
               name,
-              score,
-              max_score,
+              maxScore,
               weight: value,
+              defaultName,
+              lockWeights,
+              totalScore,
+              maxTotalScore,
             };
             const result = onChange(modelFields);
             value = result?.weight ?? value;
@@ -248,6 +253,134 @@ export default function AssignmentCreateForm(props) {
         errorMessage={errors.weight?.errorMessage}
         hasError={errors.weight?.hasError}
         {...getOverrideProps(overrides, "weight")}
+      ></TextField>
+      <TextField
+        label="Default name"
+        isRequired={false}
+        isReadOnly={false}
+        value={defaultName}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              name,
+              maxScore,
+              weight,
+              defaultName: value,
+              lockWeights,
+              totalScore,
+              maxTotalScore,
+            };
+            const result = onChange(modelFields);
+            value = result?.defaultName ?? value;
+          }
+          if (errors.defaultName?.hasError) {
+            runValidationTasks("defaultName", value);
+          }
+          setDefaultName(value);
+        }}
+        onBlur={() => runValidationTasks("defaultName", defaultName)}
+        errorMessage={errors.defaultName?.errorMessage}
+        hasError={errors.defaultName?.hasError}
+        {...getOverrideProps(overrides, "defaultName")}
+      ></TextField>
+      <SwitchField
+        label="Lock weights"
+        defaultChecked={false}
+        isDisabled={false}
+        isChecked={lockWeights}
+        onChange={(e) => {
+          let value = e.target.checked;
+          if (onChange) {
+            const modelFields = {
+              name,
+              maxScore,
+              weight,
+              defaultName,
+              lockWeights: value,
+              totalScore,
+              maxTotalScore,
+            };
+            const result = onChange(modelFields);
+            value = result?.lockWeights ?? value;
+          }
+          if (errors.lockWeights?.hasError) {
+            runValidationTasks("lockWeights", value);
+          }
+          setLockWeights(value);
+        }}
+        onBlur={() => runValidationTasks("lockWeights", lockWeights)}
+        errorMessage={errors.lockWeights?.errorMessage}
+        hasError={errors.lockWeights?.hasError}
+        {...getOverrideProps(overrides, "lockWeights")}
+      ></SwitchField>
+      <TextField
+        label="Total score"
+        isRequired={false}
+        isReadOnly={false}
+        type="number"
+        step="any"
+        value={totalScore}
+        onChange={(e) => {
+          let value = isNaN(parseFloat(e.target.value))
+            ? e.target.value
+            : parseFloat(e.target.value);
+          if (onChange) {
+            const modelFields = {
+              name,
+              maxScore,
+              weight,
+              defaultName,
+              lockWeights,
+              totalScore: value,
+              maxTotalScore,
+            };
+            const result = onChange(modelFields);
+            value = result?.totalScore ?? value;
+          }
+          if (errors.totalScore?.hasError) {
+            runValidationTasks("totalScore", value);
+          }
+          setTotalScore(value);
+        }}
+        onBlur={() => runValidationTasks("totalScore", totalScore)}
+        errorMessage={errors.totalScore?.errorMessage}
+        hasError={errors.totalScore?.hasError}
+        {...getOverrideProps(overrides, "totalScore")}
+      ></TextField>
+      <TextField
+        label="Max total score"
+        isRequired={false}
+        isReadOnly={false}
+        type="number"
+        step="any"
+        value={maxTotalScore}
+        onChange={(e) => {
+          let value = isNaN(parseFloat(e.target.value))
+            ? e.target.value
+            : parseFloat(e.target.value);
+          if (onChange) {
+            const modelFields = {
+              name,
+              maxScore,
+              weight,
+              defaultName,
+              lockWeights,
+              totalScore,
+              maxTotalScore: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.maxTotalScore ?? value;
+          }
+          if (errors.maxTotalScore?.hasError) {
+            runValidationTasks("maxTotalScore", value);
+          }
+          setMaxTotalScore(value);
+        }}
+        onBlur={() => runValidationTasks("maxTotalScore", maxTotalScore)}
+        errorMessage={errors.maxTotalScore?.errorMessage}
+        hasError={errors.maxTotalScore?.hasError}
+        {...getOverrideProps(overrides, "maxTotalScore")}
       ></TextField>
       <Flex
         justifyContent="space-between"

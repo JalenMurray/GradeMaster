@@ -11,9 +11,9 @@ function NewClassForm() {
     classSemesterId: null,
     code: '',
     title: '',
-    desired_score: 100.0,
+    desiredScore: 100.0,
     units: 3,
-    display_color: '#00CDB7',
+    displayColor: '#00CDB7',
   });
   const [queryKey, setQueryKey] = useState(null);
 
@@ -23,6 +23,7 @@ function NewClassForm() {
 
   const submitNewClass = async () => {
     try {
+      console.log(formData);
       await client.graphql({
         query: createClass,
         variables: {
@@ -97,8 +98,8 @@ function NewClassForm() {
           <input
             type="number"
             className="input input-bordered w-full"
-            value={formData.desired_score}
-            onChange={(e) => setFormData({ ...formData, desired_score: e.target.value })}
+            value={formData.desiredScore}
+            onChange={(e) => setFormData({ ...formData, desiredScore: e.target.value })}
           />
         </label>
         <label className="form-control w-full">

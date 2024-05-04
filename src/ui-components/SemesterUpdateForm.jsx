@@ -66,9 +66,9 @@ export default function SemesterUpdateForm(props) {
   }, [idProp, semesterModelProp]);
   React.useEffect(resetStateValues, [semesterRecord]);
   const validations = {
-    season: [{ type: "Required" }],
-    year: [{ type: "Required" }],
-    current: [{ type: "Required" }],
+    season: [],
+    year: [],
+    current: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -96,9 +96,9 @@ export default function SemesterUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          season,
-          year,
-          current,
+          season: season ?? null,
+          year: year ?? null,
+          current: current ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -199,7 +199,7 @@ export default function SemesterUpdateForm(props) {
       </SelectField>
       <TextField
         label="Year"
-        isRequired={true}
+        isRequired={false}
         isReadOnly={false}
         type="number"
         step="any"

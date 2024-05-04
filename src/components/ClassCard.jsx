@@ -4,7 +4,7 @@ function ClassCard({ cls }) {
   return (
     <div className="card card-side bg-base-200 shadow-xl w-full md:w-2/5">
       <figure className="w-10 h-full">
-        <div className="w-full h-full" style={{ backgroundColor: cls.display_color }} />
+        <div className="w-full h-full" style={{ backgroundColor: cls.displayColor }} />
       </figure>
       <div className="card-body">
         <h2 className="card-title">{cls.code}</h2>

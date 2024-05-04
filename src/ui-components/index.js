@@ -5,7 +5,11 @@
  **************************************************************************/
 
 export { default as AssignmentCreateForm } from "./AssignmentCreateForm";
+export { default as AssignmentTypeCreateForm } from "./AssignmentTypeCreateForm";
+export { default as AssignmentTypeUpdateForm } from "./AssignmentTypeUpdateForm";
 export { default as AssignmentUpdateForm } from "./AssignmentUpdateForm";
+export { default as ClassCreateForm } from "./ClassCreateForm";
+export { default as ClassUpdateForm } from "./ClassUpdateForm";
 export { default as SemesterCreateForm } from "./SemesterCreateForm";
 export { default as SemesterUpdateForm } from "./SemesterUpdateForm";
 export { default as studioTheme } from "./studioTheme";

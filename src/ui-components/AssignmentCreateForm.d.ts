@@ -23,11 +23,13 @@ export declare type ValidationResponse = {
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type AssignmentCreateFormInputValues = {
     name?: string;
+    score?: number;
     max_score?: number;
     weight?: number;
 };
 export declare type AssignmentCreateFormValidationValues = {
     name?: ValidationFunction<string>;
+    score?: ValidationFunction<number>;
     max_score?: ValidationFunction<number>;
     weight?: ValidationFunction<number>;
 };
@@ -35,6 +37,7 @@ export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes
 export declare type AssignmentCreateFormOverridesProps = {
     AssignmentCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
+    score?: PrimitiveOverrideProps<TextFieldProps>;
     max_score?: PrimitiveOverrideProps<TextFieldProps>;
     weight?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;

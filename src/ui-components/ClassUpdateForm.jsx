@@ -9,13 +9,13 @@ import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { getAssignment } from "../graphql/queries";
-import { updateAssignment } from "../graphql/mutations";
+import { getClass } from "../graphql/queries";
+import { updateClass } from "../graphql/mutations";
 const client = generateClient();
-export default function AssignmentUpdateForm(props) {
+export default function ClassUpdateForm(props) {
   const {
     id: idProp,
-    assignment: assignmentModelProp,
+    class: classModelProp,
     onSuccess,
     onError,
     onSubmit,
@@ -25,48 +25,59 @@ export default function AssignmentUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    name: "",
+    code: "",
+    title: "",
     score: "",
-    max_score: "",
-    weight: "",
+    desiredScore: "",
+    displayColor: "",
+    units: "",
   };
-  const [name, setName] = React.useState(initialValues.name);
+  const [code, setCode] = React.useState(initialValues.code);
+  const [title, setTitle] = React.useState(initialValues.title);
   const [score, setScore] = React.useState(initialValues.score);
-  const [max_score, setMax_score] = React.useState(initialValues.max_score);
-  const [weight, setWeight] = React.useState(initialValues.weight);
+  const [desiredScore, setDesiredScore] = React.useState(
+    initialValues.desiredScore
+  );
+  const [displayColor, setDisplayColor] = React.useState(
+    initialValues.displayColor
+  );
+  const [units, setUnits] = React.useState(initialValues.units);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    const cleanValues = assignmentRecord
-      ? { ...initialValues, ...assignmentRecord }
+    const cleanValues = classRecord
+      ? { ...initialValues, ...classRecord }
       : initialValues;
-    setName(cleanValues.name);
+    setCode(cleanValues.code);
+    setTitle(cleanValues.title);
     setScore(cleanValues.score);
-    setMax_score(cleanValues.max_score);
-    setWeight(cleanValues.weight);
+    setDesiredScore(cleanValues.desiredScore);
+    setDisplayColor(cleanValues.displayColor);
+    setUnits(cleanValues.units);
     setErrors({});
   };
-  const [assignmentRecord, setAssignmentRecord] =
-    React.useState(assignmentModelProp);
+  const [classRecord, setClassRecord] = React.useState(classModelProp);
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
         ? (
             await client.graphql({
-              query: getAssignment.replaceAll("__typename", ""),
+              query: getClass.replaceAll("__typename", ""),
               variables: { id: idProp },
             })
-          )?.data?.getAssignment
-        : assignmentModelProp;
-      setAssignmentRecord(record);
+          )?.data?.getClass
+        : classModelProp;
+      setClassRecord(record);
     };
     queryData();
-  }, [idProp, assignmentModelProp]);
-  React.useEffect(resetStateValues, [assignmentRecord]);
+  }, [idProp, classModelProp]);
+  React.useEffect(resetStateValues, [classRecord]);
   const validations = {
-    name: [{ type: "Required" }],
+    code: [{ type: "Required" }],
+    title: [{ type: "Required" }],
     score: [],
-    max_score: [],
-    weight: [],
+    desiredScore: [],
+    displayColor: [],
+    units: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -94,10 +105,12 @@ export default function AssignmentUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          name,
+          code,
+          title,
           score: score ?? null,
-          max_score: max_score ?? null,
-          weight: weight ?? null,
+          desiredScore: desiredScore ?? null,
+          displayColor: displayColor ?? null,
+          units,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -128,10 +141,10 @@ export default function AssignmentUpdateForm(props) {
             }
           });
           await client.graphql({
-            query: updateAssignment.replaceAll("__typename", ""),
+            query: updateClass.replaceAll("__typename", ""),
             variables: {
               input: {
-                id: assignmentRecord.id,
+                id: classRecord.id,
                 ...modelFields,
               },
             },
@@ -146,35 +159,66 @@ export default function AssignmentUpdateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "AssignmentUpdateForm")}
+      {...getOverrideProps(overrides, "ClassUpdateForm")}
       {...rest}
     >
       <TextField
-        label="Name"
+        label="Code"
         isRequired={true}
         isReadOnly={false}
-        value={name}
+        value={code}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              name: value,
+              code: value,
+              title,
               score,
-              max_score,
-              weight,
+              desiredScore,
+              displayColor,
+              units,
             };
             const result = onChange(modelFields);
-            value = result?.name ?? value;
+            value = result?.code ?? value;
           }
-          if (errors.name?.hasError) {
-            runValidationTasks("name", value);
+          if (errors.code?.hasError) {
+            runValidationTasks("code", value);
           }
-          setName(value);
+          setCode(value);
         }}
-        onBlur={() => runValidationTasks("name", name)}
-        errorMessage={errors.name?.errorMessage}
-        hasError={errors.name?.hasError}
-        {...getOverrideProps(overrides, "name")}
+        onBlur={() => runValidationTasks("code", code)}
+        errorMessage={errors.code?.errorMessage}
+        hasError={errors.code?.hasError}
+        {...getOverrideProps(overrides, "code")}
+      ></TextField>
+      <TextField
+        label="Title"
+        isRequired={true}
+        isReadOnly={false}
+        value={title}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              code,
+              title: value,
+              score,
+              desiredScore,
+              displayColor,
+              units,
+            };
+            const result = onChange(modelFields);
+            value = result?.title ?? value;
+          }
+          if (errors.title?.hasError) {
+            runValidationTasks("title", value);
+          }
+          setTitle(value);
+        }}
+        onBlur={() => runValidationTasks("title", title)}
+        errorMessage={errors.title?.errorMessage}
+        hasError={errors.title?.hasError}
+        {...getOverrideProps(overrides, "title")}
       ></TextField>
       <TextField
         label="Score"
@@ -189,10 +233,12 @@ export default function AssignmentUpdateForm(props) {
             : parseFloat(e.target.value);
           if (onChange) {
             const modelFields = {
-              name,
+              code,
+              title,
               score: value,
-              max_score,
-              weight,
+              desiredScore,
+              displayColor,
+              units,
             };
             const result = onChange(modelFields);
             value = result?.score ?? value;
@@ -208,66 +254,99 @@ export default function AssignmentUpdateForm(props) {
         {...getOverrideProps(overrides, "score")}
       ></TextField>
       <TextField
-        label="Max score"
+        label="Desired score"
         isRequired={false}
         isReadOnly={false}
         type="number"
         step="any"
-        value={max_score}
+        value={desiredScore}
         onChange={(e) => {
           let value = isNaN(parseFloat(e.target.value))
             ? e.target.value
             : parseFloat(e.target.value);
           if (onChange) {
             const modelFields = {
-              name,
+              code,
+              title,
               score,
-              max_score: value,
-              weight,
+              desiredScore: value,
+              displayColor,
+              units,
             };
             const result = onChange(modelFields);
-            value = result?.max_score ?? value;
+            value = result?.desiredScore ?? value;
           }
-          if (errors.max_score?.hasError) {
-            runValidationTasks("max_score", value);
+          if (errors.desiredScore?.hasError) {
+            runValidationTasks("desiredScore", value);
           }
-          setMax_score(value);
+          setDesiredScore(value);
         }}
-        onBlur={() => runValidationTasks("max_score", max_score)}
-        errorMessage={errors.max_score?.errorMessage}
-        hasError={errors.max_score?.hasError}
-        {...getOverrideProps(overrides, "max_score")}
+        onBlur={() => runValidationTasks("desiredScore", desiredScore)}
+        errorMessage={errors.desiredScore?.errorMessage}
+        hasError={errors.desiredScore?.hasError}
+        {...getOverrideProps(overrides, "desiredScore")}
       ></TextField>
       <TextField
-        label="Weight"
+        label="Display color"
         isRequired={false}
+        isReadOnly={false}
+        value={displayColor}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              code,
+              title,
+              score,
+              desiredScore,
+              displayColor: value,
+              units,
+            };
+            const result = onChange(modelFields);
+            value = result?.displayColor ?? value;
+          }
+          if (errors.displayColor?.hasError) {
+            runValidationTasks("displayColor", value);
+          }
+          setDisplayColor(value);
+        }}
+        onBlur={() => runValidationTasks("displayColor", displayColor)}
+        errorMessage={errors.displayColor?.errorMessage}
+        hasError={errors.displayColor?.hasError}
+        {...getOverrideProps(overrides, "displayColor")}
+      ></TextField>
+      <TextField
+        label="Units"
+        isRequired={true}
         isReadOnly={false}
         type="number"
         step="any"
-        value={weight}
+        value={units}
         onChange={(e) => {
-          let value = isNaN(parseFloat(e.target.value))
+          let value = isNaN(parseInt(e.target.value))
             ? e.target.value
-            : parseFloat(e.target.value);
+            : parseInt(e.target.value);
           if (onChange) {
             const modelFields = {
-              name,
+              code,
+              title,
               score,
-              max_score,
-              weight: value,
+              desiredScore,
+              displayColor,
+              units: value,
             };
             const result = onChange(modelFields);
-            value = result?.weight ?? value;
+            value = result?.units ?? value;
           }
-          if (errors.weight?.hasError) {
-            runValidationTasks("weight", value);
+          if (errors.units?.hasError) {
+            runValidationTasks("units", value);
           }
-          setWeight(value);
+          setUnits(value);
         }}
-        onBlur={() => runValidationTasks("weight", weight)}
-        errorMessage={errors.weight?.errorMessage}
-        hasError={errors.weight?.hasError}
-        {...getOverrideProps(overrides, "weight")}
+        onBlur={() => runValidationTasks("units", units)}
+        errorMessage={errors.units?.errorMessage}
+        hasError={errors.units?.hasError}
+        {...getOverrideProps(overrides, "units")}
       ></TextField>
       <Flex
         justifyContent="space-between"
@@ -280,7 +359,7 @@ export default function AssignmentUpdateForm(props) {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || assignmentModelProp)}
+          isDisabled={!(idProp || classModelProp)}
           {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
@@ -292,7 +371,7 @@ export default function AssignmentUpdateForm(props) {
             type="submit"
             variation="primary"
             isDisabled={
-              !(idProp || assignmentModelProp) ||
+              !(idProp || classModelProp) ||
               Object.values(errors).some((e) => e?.hasError)
             }
             {...getOverrideProps(overrides, "SubmitButton")}

@@ -1,0 +1,12 @@
+{
+  "AppSyncApiName": "GradeMaster",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authGradeMaster",
+      "Outputs.UserPoolId"
+    ]
+  },
+  "AuthModeLastUpdated": "2024-05-04T12:47:25.714Z"
+}

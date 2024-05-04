@@ -1,0 +1,29 @@
+{
+  "main": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-grademaster-main-68c72-authRole",
+      "UnauthRoleArn": "arn:aws:iam::851725160507:role/amplify-grademaster-main-68c72-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::851725160507:role/amplify-grademaster-main-68c72-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-grademaster-main-68c72-deployment",
+      "UnauthRoleName": "amplify-grademaster-main-68c72-unauthRole",
+      "StackName": "amplify-grademaster-main-68c72",
+      "StackId": "arn:aws:cloudformation:us-east-1:851725160507:stack/amplify-grademaster-main-68c72/5e6e6670-0a11-11ef-9a46-0e68387781af",
+      "AmplifyAppId": "d62997fzrseo4"
+    },
+    "categories": {
+      "auth": {
+        "GradeMaster": {}
+      },
+      "function": {
+        "sumAssignmentScores": {
+          "deploymentBucketName": "amplify-grademaster-main-68c72-deployment",
+          "s3Key": "amplify-builds/sumAssignmentScores-594c2b59584e66317842-build.zip"
+        }
+      },
+      "api": {
+        "GradeMaster": {}
+      }
+    }
+  }
+}
