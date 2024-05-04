@@ -1,108 +1,6 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createAssignment = /* GraphQL */ `
-  mutation CreateAssignment(
-    $input: CreateAssignmentInput!
-    $condition: ModelAssignmentConditionInput
-  ) {
-    createAssignment(input: $input, condition: $condition) {
-      id
-      name
-      score
-      max_score
-      weight
-      assignmentType {
-        id
-        name
-        maxScore
-        weight
-        defaultName
-        lockWeights
-        totalScore
-        maxTotalScore
-        createdAt
-        updatedAt
-        assignmentTypeClassId
-        owner
-        __typename
-      }
-      createdAt
-      updatedAt
-      assignmentAssignmentTypeId
-      owner
-      __typename
-    }
-  }
-`;
-export const updateAssignment = /* GraphQL */ `
-  mutation UpdateAssignment(
-    $input: UpdateAssignmentInput!
-    $condition: ModelAssignmentConditionInput
-  ) {
-    updateAssignment(input: $input, condition: $condition) {
-      id
-      name
-      score
-      max_score
-      weight
-      assignmentType {
-        id
-        name
-        maxScore
-        weight
-        defaultName
-        lockWeights
-        totalScore
-        maxTotalScore
-        createdAt
-        updatedAt
-        assignmentTypeClassId
-        owner
-        __typename
-      }
-      createdAt
-      updatedAt
-      assignmentAssignmentTypeId
-      owner
-      __typename
-    }
-  }
-`;
-export const deleteAssignment = /* GraphQL */ `
-  mutation DeleteAssignment(
-    $input: DeleteAssignmentInput!
-    $condition: ModelAssignmentConditionInput
-  ) {
-    deleteAssignment(input: $input, condition: $condition) {
-      id
-      name
-      score
-      max_score
-      weight
-      assignmentType {
-        id
-        name
-        maxScore
-        weight
-        defaultName
-        lockWeights
-        totalScore
-        maxTotalScore
-        createdAt
-        updatedAt
-        assignmentTypeClassId
-        owner
-        __typename
-      }
-      createdAt
-      updatedAt
-      assignmentAssignmentTypeId
-      owner
-      __typename
-    }
-  }
-`;
 export const createAssignmentType = /* GraphQL */ `
   mutation CreateAssignmentType(
     $input: CreateAssignmentTypeInput!
@@ -131,6 +29,7 @@ export const createAssignmentType = /* GraphQL */ `
       }
       totalScore
       maxTotalScore
+      assignments
       createdAt
       updatedAt
       assignmentTypeClassId
@@ -167,6 +66,7 @@ export const updateAssignmentType = /* GraphQL */ `
       }
       totalScore
       maxTotalScore
+      assignments
       createdAt
       updatedAt
       assignmentTypeClassId
@@ -203,6 +103,7 @@ export const deleteAssignmentType = /* GraphQL */ `
       }
       totalScore
       maxTotalScore
+      assignments
       createdAt
       updatedAt
       assignmentTypeClassId

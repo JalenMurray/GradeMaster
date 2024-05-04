@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { GridProps, SwitchFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, SwitchFieldProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -29,6 +29,7 @@ export declare type AssignmentTypeUpdateFormInputValues = {
     lockWeights?: boolean;
     totalScore?: number;
     maxTotalScore?: number;
+    assignments?: string[];
 };
 export declare type AssignmentTypeUpdateFormValidationValues = {
     name?: ValidationFunction<string>;
@@ -38,6 +39,7 @@ export declare type AssignmentTypeUpdateFormValidationValues = {
     lockWeights?: ValidationFunction<boolean>;
     totalScore?: ValidationFunction<number>;
     maxTotalScore?: ValidationFunction<number>;
+    assignments?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type AssignmentTypeUpdateFormOverridesProps = {
@@ -49,6 +51,7 @@ export declare type AssignmentTypeUpdateFormOverridesProps = {
     lockWeights?: PrimitiveOverrideProps<SwitchFieldProps>;
     totalScore?: PrimitiveOverrideProps<TextFieldProps>;
     maxTotalScore?: PrimitiveOverrideProps<TextFieldProps>;
+    assignments?: PrimitiveOverrideProps<TextAreaFieldProps>;
 } & EscapeHatchProps;
 export declare type AssignmentTypeUpdateFormProps = React.PropsWithChildren<{
     overrides?: AssignmentTypeUpdateFormOverridesProps | undefined | null;

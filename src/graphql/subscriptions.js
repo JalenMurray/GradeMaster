@@ -1,108 +1,6 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const onCreateAssignment = /* GraphQL */ `
-  subscription OnCreateAssignment(
-    $filter: ModelSubscriptionAssignmentFilterInput
-    $owner: String
-  ) {
-    onCreateAssignment(filter: $filter, owner: $owner) {
-      id
-      name
-      score
-      max_score
-      weight
-      assignmentType {
-        id
-        name
-        maxScore
-        weight
-        defaultName
-        lockWeights
-        totalScore
-        maxTotalScore
-        createdAt
-        updatedAt
-        assignmentTypeClassId
-        owner
-        __typename
-      }
-      createdAt
-      updatedAt
-      assignmentAssignmentTypeId
-      owner
-      __typename
-    }
-  }
-`;
-export const onUpdateAssignment = /* GraphQL */ `
-  subscription OnUpdateAssignment(
-    $filter: ModelSubscriptionAssignmentFilterInput
-    $owner: String
-  ) {
-    onUpdateAssignment(filter: $filter, owner: $owner) {
-      id
-      name
-      score
-      max_score
-      weight
-      assignmentType {
-        id
-        name
-        maxScore
-        weight
-        defaultName
-        lockWeights
-        totalScore
-        maxTotalScore
-        createdAt
-        updatedAt
-        assignmentTypeClassId
-        owner
-        __typename
-      }
-      createdAt
-      updatedAt
-      assignmentAssignmentTypeId
-      owner
-      __typename
-    }
-  }
-`;
-export const onDeleteAssignment = /* GraphQL */ `
-  subscription OnDeleteAssignment(
-    $filter: ModelSubscriptionAssignmentFilterInput
-    $owner: String
-  ) {
-    onDeleteAssignment(filter: $filter, owner: $owner) {
-      id
-      name
-      score
-      max_score
-      weight
-      assignmentType {
-        id
-        name
-        maxScore
-        weight
-        defaultName
-        lockWeights
-        totalScore
-        maxTotalScore
-        createdAt
-        updatedAt
-        assignmentTypeClassId
-        owner
-        __typename
-      }
-      createdAt
-      updatedAt
-      assignmentAssignmentTypeId
-      owner
-      __typename
-    }
-  }
-`;
 export const onCreateAssignmentType = /* GraphQL */ `
   subscription OnCreateAssignmentType(
     $filter: ModelSubscriptionAssignmentTypeFilterInput
@@ -131,6 +29,7 @@ export const onCreateAssignmentType = /* GraphQL */ `
       }
       totalScore
       maxTotalScore
+      assignments
       createdAt
       updatedAt
       assignmentTypeClassId
@@ -167,6 +66,7 @@ export const onUpdateAssignmentType = /* GraphQL */ `
       }
       totalScore
       maxTotalScore
+      assignments
       createdAt
       updatedAt
       assignmentTypeClassId
@@ -203,6 +103,7 @@ export const onDeleteAssignmentType = /* GraphQL */ `
       }
       totalScore
       maxTotalScore
+      assignments
       createdAt
       updatedAt
       assignmentTypeClassId
