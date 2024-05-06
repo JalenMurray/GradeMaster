@@ -29,7 +29,7 @@ function AssignmentType({ at }) {
       await client.graphql({
         query: updateAssignmentType,
         variables: {
-          input: { id: at.id, assignments: JSON.stringify(assignments) },
+          input: { id: at.id, assignments: newAssignment },
         },
         authMode: 'userPool',
       });
