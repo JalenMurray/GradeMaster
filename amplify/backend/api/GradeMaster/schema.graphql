@@ -1,3 +1,12 @@
+type Assignment @model @auth(rules: [{allow: owner}]) {
+  id: ID!
+  name: String!
+  score: String
+  maxScore: String
+  weight: String
+  assignmentType: AssignmentType @hasOne
+}
+
 type AssignmentType @model @auth(rules: [{allow: owner}]) {
   id: ID!
   name: String!
@@ -8,7 +17,6 @@ type AssignmentType @model @auth(rules: [{allow: owner}]) {
   class: Class @hasOne
   totalScore: Float
   maxTotalScore: Float
-  assignments: [AWSJSON]
 }
 
 type Class @model @auth(rules: [{allow: owner}]) {

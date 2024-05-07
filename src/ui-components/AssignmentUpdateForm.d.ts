@@ -23,22 +23,22 @@ export declare type ValidationResponse = {
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type AssignmentUpdateFormInputValues = {
     name?: string;
-    score?: number;
-    max_score?: number;
-    weight?: number;
+    score?: string;
+    maxScore?: string;
+    weight?: string;
 };
 export declare type AssignmentUpdateFormValidationValues = {
     name?: ValidationFunction<string>;
-    score?: ValidationFunction<number>;
-    max_score?: ValidationFunction<number>;
-    weight?: ValidationFunction<number>;
+    score?: ValidationFunction<string>;
+    maxScore?: ValidationFunction<string>;
+    weight?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type AssignmentUpdateFormOverridesProps = {
     AssignmentUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
     score?: PrimitiveOverrideProps<TextFieldProps>;
-    max_score?: PrimitiveOverrideProps<TextFieldProps>;
+    maxScore?: PrimitiveOverrideProps<TextFieldProps>;
     weight?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type AssignmentUpdateFormProps = React.PropsWithChildren<{

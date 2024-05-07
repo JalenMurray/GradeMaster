@@ -25,25 +25,25 @@ export default function AssignmentCreateForm(props) {
   const initialValues = {
     name: "",
     score: "",
-    max_score: "",
+    maxScore: "",
     weight: "",
   };
   const [name, setName] = React.useState(initialValues.name);
   const [score, setScore] = React.useState(initialValues.score);
-  const [max_score, setMax_score] = React.useState(initialValues.max_score);
+  const [maxScore, setMaxScore] = React.useState(initialValues.maxScore);
   const [weight, setWeight] = React.useState(initialValues.weight);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setName(initialValues.name);
     setScore(initialValues.score);
-    setMax_score(initialValues.max_score);
+    setMaxScore(initialValues.maxScore);
     setWeight(initialValues.weight);
     setErrors({});
   };
   const validations = {
     name: [{ type: "Required" }],
     score: [],
-    max_score: [],
+    maxScore: [],
     weight: [],
   };
   const runValidationTasks = async (
@@ -74,7 +74,7 @@ export default function AssignmentCreateForm(props) {
         let modelFields = {
           name,
           score,
-          max_score,
+          maxScore,
           weight,
         };
         const validationResponses = await Promise.all(
@@ -140,7 +140,7 @@ export default function AssignmentCreateForm(props) {
             const modelFields = {
               name: value,
               score,
-              max_score,
+              maxScore,
               weight,
             };
             const result = onChange(modelFields);
@@ -160,18 +160,14 @@ export default function AssignmentCreateForm(props) {
         label="Score"
         isRequired={false}
         isReadOnly={false}
-        type="number"
-        step="any"
         value={score}
         onChange={(e) => {
-          let value = isNaN(parseFloat(e.target.value))
-            ? e.target.value
-            : parseFloat(e.target.value);
+          let { value } = e.target;
           if (onChange) {
             const modelFields = {
               name,
               score: value,
-              max_score,
+              maxScore,
               weight,
             };
             const result = onChange(modelFields);
@@ -191,49 +187,41 @@ export default function AssignmentCreateForm(props) {
         label="Max score"
         isRequired={false}
         isReadOnly={false}
-        type="number"
-        step="any"
-        value={max_score}
+        value={maxScore}
         onChange={(e) => {
-          let value = isNaN(parseFloat(e.target.value))
-            ? e.target.value
-            : parseFloat(e.target.value);
+          let { value } = e.target;
           if (onChange) {
             const modelFields = {
               name,
               score,
-              max_score: value,
+              maxScore: value,
               weight,
             };
             const result = onChange(modelFields);
-            value = result?.max_score ?? value;
+            value = result?.maxScore ?? value;
           }
-          if (errors.max_score?.hasError) {
-            runValidationTasks("max_score", value);
+          if (errors.maxScore?.hasError) {
+            runValidationTasks("maxScore", value);
           }
-          setMax_score(value);
+          setMaxScore(value);
         }}
-        onBlur={() => runValidationTasks("max_score", max_score)}
-        errorMessage={errors.max_score?.errorMessage}
-        hasError={errors.max_score?.hasError}
-        {...getOverrideProps(overrides, "max_score")}
+        onBlur={() => runValidationTasks("maxScore", maxScore)}
+        errorMessage={errors.maxScore?.errorMessage}
+        hasError={errors.maxScore?.hasError}
+        {...getOverrideProps(overrides, "maxScore")}
       ></TextField>
       <TextField
         label="Weight"
         isRequired={false}
         isReadOnly={false}
-        type="number"
-        step="any"
         value={weight}
         onChange={(e) => {
-          let value = isNaN(parseFloat(e.target.value))
-            ? e.target.value
-            : parseFloat(e.target.value);
+          let { value } = e.target;
           if (onChange) {
             const modelFields = {
               name,
               score,
-              max_score,
+              maxScore,
               weight: value,
             };
             const result = onChange(modelFields);

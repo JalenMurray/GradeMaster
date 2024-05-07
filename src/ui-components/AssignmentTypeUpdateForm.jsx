@@ -7,179 +7,17 @@
 /* eslint-disable */
 import * as React from "react";
 import {
-  Badge,
   Button,
-  Divider,
   Flex,
   Grid,
-  Icon,
-  ScrollView,
   SwitchField,
-  Text,
-  TextAreaField,
   TextField,
-  useTheme,
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
 import { getAssignmentType } from "../graphql/queries";
 import { updateAssignmentType } from "../graphql/mutations";
 const client = generateClient();
-function ArrayField({
-  items = [],
-  onChange,
-  label,
-  inputFieldRef,
-  children,
-  hasError,
-  setFieldValue,
-  currentFieldValue,
-  defaultFieldValue,
-  lengthLimit,
-  getBadgeText,
-  runValidationTasks,
-  errorMessage,
-}) {
-  const labelElement = <Text>{label}</Text>;
-  const {
-    tokens: {
-      components: {
-        fieldmessages: { error: errorStyles },
-      },
-    },
-  } = useTheme();
-  const [selectedBadgeIndex, setSelectedBadgeIndex] = React.useState();
-  const [isEditing, setIsEditing] = React.useState();
-  React.useEffect(() => {
-    if (isEditing) {
-      inputFieldRef?.current?.focus();
-    }
-  }, [isEditing]);
-  const removeItem = async (removeIndex) => {
-    const newItems = items.filter((value, index) => index !== removeIndex);
-    await onChange(newItems);
-    setSelectedBadgeIndex(undefined);
-  };
-  const addItem = async () => {
-    const { hasError } = runValidationTasks();
-    if (
-      currentFieldValue !== undefined &&
-      currentFieldValue !== null &&
-      currentFieldValue !== "" &&
-      !hasError
-    ) {
-      const newItems = [...items];
-      if (selectedBadgeIndex !== undefined) {
-        newItems[selectedBadgeIndex] = currentFieldValue;
-        setSelectedBadgeIndex(undefined);
-      } else {
-        newItems.push(currentFieldValue);
-      }
-      await onChange(newItems);
-      setIsEditing(false);
-    }
-  };
-  const arraySection = (
-    <React.Fragment>
-      {!!items?.length && (
-        <ScrollView height="inherit" width="inherit" maxHeight={"7rem"}>
-          {items.map((value, index) => {
-            return (
-              <Badge
-                key={index}
-                style={{
-                  cursor: "pointer",
-                  alignItems: "center",
-                  marginRight: 3,
-                  marginTop: 3,
-                  backgroundColor:
-                    index === selectedBadgeIndex ? "#B8CEF9" : "",
-                }}
-                onClick={() => {
-                  setSelectedBadgeIndex(index);
-                  setFieldValue(items[index]);
-                  setIsEditing(true);
-                }}
-              >
-                {getBadgeText ? getBadgeText(value) : value.toString()}
-                <Icon
-                  style={{
-                    cursor: "pointer",
-                    paddingLeft: 3,
-                    width: 20,
-                    height: 20,
-                  }}
-                  viewBox={{ width: 20, height: 20 }}
-                  paths={[
-                    {
-                      d: "M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z",
-                      stroke: "black",
-                    },
-                  ]}
-                  ariaLabel="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    removeItem(index);
-                  }}
-                />
-              </Badge>
-            );
-          })}
-        </ScrollView>
-      )}
-      <Divider orientation="horizontal" marginTop={5} />
-    </React.Fragment>
-  );
-  if (lengthLimit !== undefined && items.length >= lengthLimit && !isEditing) {
-    return (
-      <React.Fragment>
-        {labelElement}
-        {arraySection}
-      </React.Fragment>
-    );
-  }
-  return (
-    <React.Fragment>
-      {labelElement}
-      {isEditing && children}
-      {!isEditing ? (
-        <>
-          <Button
-            onClick={() => {
-              setIsEditing(true);
-            }}
-          >
-            Add item
-          </Button>
-          {errorMessage && hasError && (
-            <Text color={errorStyles.color} fontSize={errorStyles.fontSize}>
-              {errorMessage}
-            </Text>
-          )}
-        </>
-      ) : (
-        <Flex justifyContent="flex-end">
-          {(currentFieldValue || isEditing) && (
-            <Button
-              children="Cancel"
-              type="button"
-              size="small"
-              onClick={() => {
-                setFieldValue(defaultFieldValue);
-                setIsEditing(false);
-                setSelectedBadgeIndex(undefined);
-              }}
-            ></Button>
-          )}
-          <Button size="small" variation="link" onClick={addItem}>
-            {selectedBadgeIndex !== undefined ? "Save" : "Add"}
-          </Button>
-        </Flex>
-      )}
-      {arraySection}
-    </React.Fragment>
-  );
-}
 export default function AssignmentTypeUpdateForm(props) {
   const {
     id: idProp,
@@ -200,7 +38,6 @@ export default function AssignmentTypeUpdateForm(props) {
     lockWeights: false,
     totalScore: "",
     maxTotalScore: "",
-    assignments: [],
   };
   const [name, setName] = React.useState(initialValues.name);
   const [maxScore, setMaxScore] = React.useState(initialValues.maxScore);
@@ -215,9 +52,6 @@ export default function AssignmentTypeUpdateForm(props) {
   const [maxTotalScore, setMaxTotalScore] = React.useState(
     initialValues.maxTotalScore
   );
-  const [assignments, setAssignments] = React.useState(
-    initialValues.assignments
-  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = assignmentTypeRecord
@@ -230,8 +64,6 @@ export default function AssignmentTypeUpdateForm(props) {
     setLockWeights(cleanValues.lockWeights);
     setTotalScore(cleanValues.totalScore);
     setMaxTotalScore(cleanValues.maxTotalScore);
-    setAssignments(cleanValues.assignments ?? []);
-    setCurrentAssignmentsValue("");
     setErrors({});
   };
   const [assignmentTypeRecord, setAssignmentTypeRecord] = React.useState(
@@ -252,9 +84,6 @@ export default function AssignmentTypeUpdateForm(props) {
     queryData();
   }, [idProp, assignmentTypeModelProp]);
   React.useEffect(resetStateValues, [assignmentTypeRecord]);
-  const [currentAssignmentsValue, setCurrentAssignmentsValue] =
-    React.useState("");
-  const assignmentsRef = React.createRef();
   const validations = {
     name: [{ type: "Required" }],
     maxScore: [],
@@ -263,7 +92,6 @@ export default function AssignmentTypeUpdateForm(props) {
     lockWeights: [],
     totalScore: [],
     maxTotalScore: [],
-    assignments: [{ type: "JSON" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -298,7 +126,6 @@ export default function AssignmentTypeUpdateForm(props) {
           lockWeights: lockWeights ?? null,
           totalScore: totalScore ?? null,
           maxTotalScore: maxTotalScore ?? null,
-          assignments: assignments ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -366,7 +193,6 @@ export default function AssignmentTypeUpdateForm(props) {
               lockWeights,
               totalScore,
               maxTotalScore,
-              assignments,
             };
             const result = onChange(modelFields);
             value = result?.name ?? value;
@@ -401,7 +227,6 @@ export default function AssignmentTypeUpdateForm(props) {
               lockWeights,
               totalScore,
               maxTotalScore,
-              assignments,
             };
             const result = onChange(modelFields);
             value = result?.maxScore ?? value;
@@ -436,7 +261,6 @@ export default function AssignmentTypeUpdateForm(props) {
               lockWeights,
               totalScore,
               maxTotalScore,
-              assignments,
             };
             const result = onChange(modelFields);
             value = result?.weight ?? value;
@@ -467,7 +291,6 @@ export default function AssignmentTypeUpdateForm(props) {
               lockWeights,
               totalScore,
               maxTotalScore,
-              assignments,
             };
             const result = onChange(modelFields);
             value = result?.defaultName ?? value;
@@ -498,7 +321,6 @@ export default function AssignmentTypeUpdateForm(props) {
               lockWeights: value,
               totalScore,
               maxTotalScore,
-              assignments,
             };
             const result = onChange(modelFields);
             value = result?.lockWeights ?? value;
@@ -533,7 +355,6 @@ export default function AssignmentTypeUpdateForm(props) {
               lockWeights,
               totalScore: value,
               maxTotalScore,
-              assignments,
             };
             const result = onChange(modelFields);
             value = result?.totalScore ?? value;
@@ -568,7 +389,6 @@ export default function AssignmentTypeUpdateForm(props) {
               lockWeights,
               totalScore,
               maxTotalScore: value,
-              assignments,
             };
             const result = onChange(modelFields);
             value = result?.maxTotalScore ?? value;
@@ -583,60 +403,6 @@ export default function AssignmentTypeUpdateForm(props) {
         hasError={errors.maxTotalScore?.hasError}
         {...getOverrideProps(overrides, "maxTotalScore")}
       ></TextField>
-      <ArrayField
-        onChange={async (items) => {
-          let values = items;
-          if (onChange) {
-            const modelFields = {
-              name,
-              maxScore,
-              weight,
-              defaultName,
-              lockWeights,
-              totalScore,
-              maxTotalScore,
-              assignments: values,
-            };
-            const result = onChange(modelFields);
-            values = result?.assignments ?? values;
-          }
-          setAssignments(values);
-          setCurrentAssignmentsValue("");
-        }}
-        currentFieldValue={currentAssignmentsValue}
-        label={"Assignments"}
-        items={assignments}
-        hasError={errors?.assignments?.hasError}
-        runValidationTasks={async () =>
-          await runValidationTasks("assignments", currentAssignmentsValue)
-        }
-        errorMessage={errors?.assignments?.errorMessage}
-        setFieldValue={setCurrentAssignmentsValue}
-        inputFieldRef={assignmentsRef}
-        defaultFieldValue={""}
-      >
-        <TextAreaField
-          label="Assignments"
-          isRequired={false}
-          isReadOnly={false}
-          value={currentAssignmentsValue}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.assignments?.hasError) {
-              runValidationTasks("assignments", value);
-            }
-            setCurrentAssignmentsValue(value);
-          }}
-          onBlur={() =>
-            runValidationTasks("assignments", currentAssignmentsValue)
-          }
-          errorMessage={errors.assignments?.errorMessage}
-          hasError={errors.assignments?.hasError}
-          ref={assignmentsRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, "assignments")}
-        ></TextAreaField>
-      </ArrayField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

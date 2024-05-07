@@ -19,10 +19,6 @@ function NewClassForm() {
   const [queryKey, setQueryKey] = useState(null);
 
   useEffect(() => {
-    console.log(formData);
-  }, [formData]);
-
-  useEffect(() => {
     setQueryKey([`${formData.classSemesterId}-classes`]);
   }, [formData.classSemesterId]);
 

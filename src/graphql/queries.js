@@ -1,6 +1,61 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getAssignment = /* GraphQL */ `
+  query GetAssignment($id: ID!) {
+    getAssignment(id: $id) {
+      id
+      name
+      score
+      maxScore
+      weight
+      assignmentType {
+        id
+        name
+        maxScore
+        weight
+        defaultName
+        lockWeights
+        totalScore
+        maxTotalScore
+        createdAt
+        updatedAt
+        assignmentTypeClassId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      assignmentAssignmentTypeId
+      owner
+      __typename
+    }
+  }
+`;
+export const listAssignments = /* GraphQL */ `
+  query ListAssignments(
+    $filter: ModelAssignmentFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listAssignments(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        score
+        maxScore
+        weight
+        createdAt
+        updatedAt
+        assignmentAssignmentTypeId
+        owner
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
 export const getAssignmentType = /* GraphQL */ `
   query GetAssignmentType($id: ID!) {
     getAssignmentType(id: $id) {
@@ -26,7 +81,6 @@ export const getAssignmentType = /* GraphQL */ `
       }
       totalScore
       maxTotalScore
-      assignments
       createdAt
       updatedAt
       assignmentTypeClassId
@@ -51,7 +105,6 @@ export const listAssignmentTypes = /* GraphQL */ `
         lockWeights
         totalScore
         maxTotalScore
-        assignments
         createdAt
         updatedAt
         assignmentTypeClassId
