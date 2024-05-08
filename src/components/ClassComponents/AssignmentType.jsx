@@ -1,7 +1,7 @@
 import { AddCircleOutline, Delete, Lock, LockOpenRounded } from '@mui/icons-material';
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/api';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { createAssignment, updateAssignment, updateAssignmentType } from '../../graphql/mutations';
 import { listAssignments } from '../../graphql/queries';
 import Assignment from './Assignment';
@@ -87,6 +87,12 @@ function AssignmentType({ at }) {
       queryClient.invalidateQueries({ queryKey });
     },
   });
+
+  useEffect(() => {
+    if (assignments) {
+      console.log('Assignments updated');
+    }
+  }, [assignments]);
 
   if (!assignments) {
     return (

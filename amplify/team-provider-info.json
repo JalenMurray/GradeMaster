@@ -22,7 +22,7 @@
         },
         "balanceAssignmentTypeAssignments": {
           "deploymentBucketName": "amplify-grademaster-main-68c72-deployment",
-          "s3Key": "amplify-builds/balanceAssignmentTypeAssignments-5636395051626e634546-build.zip"
+          "s3Key": "amplify-builds/balanceAssignmentTypeAssignments-7135772b587758546856-build.zip"
         }
       },
       "api": {
