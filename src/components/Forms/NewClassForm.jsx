@@ -15,6 +15,7 @@ function NewClassForm() {
     desiredScore: 100.0,
     units: 3,
     displayColor: '#00CDB7',
+    score: 100.0,
   });
   const [queryKey, setQueryKey] = useState(null);
 

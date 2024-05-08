@@ -1,15 +1,18 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
 import { generateClient } from 'aws-amplify/api';
 import { getClass } from '../../graphql/queries';
 import GradeCalculator from '../ClassComponents/GradeCalculator';
+import { ClassContext } from '../../context/class';
+import { getSemesterStr } from '../../utils/format';
 
 const client = generateClient();
 
 function Class() {
   const { classId } = useParams();
+  const { cls, setCls } = useContext(ClassContext);
 
   const fetchClass = async () => {
     const result = await client.graphql({
@@ -21,7 +24,7 @@ function Class() {
   };
 
   const queryKey = ['class'];
-  const { data: cls, refetch } = useQuery({
+  const { data: foundCls, refetch } = useQuery({
     queryKey,
     queryFn: fetchClass,
     initialData: undefined,
@@ -31,7 +34,13 @@ function Class() {
     refetch();
   }, [classId, refetch]);
 
-  if (!cls) {
+  useEffect(() => {
+    if (foundCls) {
+      setCls(foundCls);
+    }
+  }, [foundCls, setCls]);
+
+  if (!foundCls) {
     return (
       <div className="w-full max-w-4xl flex-grow pt-10">
         <div className="flex flex-col gap-4 w-1/2">
@@ -46,8 +55,12 @@ function Class() {
 
   return (
     <div className="w-full max-w-7xl flex-grow pt-10">
-      <h1 className="text-5xl">{cls.code}</h1>
-      <h1 className="text-3xl mt-2">{cls.title}</h1>
+      <h1 className="text-5xl" style={{ color: cls.displayColor }}>
+        {cls.code} <span className="text-xl text-neutral-600">{getSemesterStr(cls.semester)}</span>
+      </h1>
+      <h1 className="text-3xl mt-2" style={{ color: cls.displayColor }}>
+        {cls.title}
+      </h1>
       <h2 className="mt-6 text-2xl flex gap-4 align-center">Actions</h2>
       <div className="mt-2 flex gap-3 w-full">
         <button className="btn btn-neutral">

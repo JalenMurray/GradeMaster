@@ -1,12 +1,16 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 
 const EMPTY_CLASS = {
   code: '',
   title: '',
   desiredScore: 100.0,
   units: 3,
-  display_color: '#FF0000',
+  displayColor: '#FF0000',
   score: 100,
+  semester: {
+    season: '',
+    year: 2000,
+  },
 };
 
 export const ClassContext = createContext({
@@ -23,19 +27,6 @@ export const ClassProvider = ({ children }) => {
   const [assignmentTypes, setAssignmentTypes] = useState({});
   const [warnings, setWarnings] = useState({});
 
-  useEffect(() => {
-    const newScore = Object.values(assignmentTypes).reduce((acc, at) => {
-      const { totalScore } = getAtScores(at.assignments);
-      return acc + totalScore;
-    });
-    const toUpdate = { score: newScore };
-    updateClass(toUpdate);
-  }, [assignmentTypes]);
-
-  const updateClass = (toUpdate) => {
-    setCls({ ...cls, ...toUpdate });
-  };
-
   // Assignment Type Updates
 
   /**
@@ -48,13 +39,11 @@ export const ClassProvider = ({ children }) => {
    */
   const getAtScores = (assignments) => {
     if (!assignments) {
-      return { totalScore: 0, maxScore: 0 };
+      return { totalScore: 0, maxSscore: 0 };
     }
-    const totalScore = assignments.reduce((acc, a) => {
-      return acc + (a.score / a.maxScore) * a.weight;
-    }, 0);
+    const totalScore = assignments.reduce((acc, a) => acc + (a.score / a.maxScore) * a.weight, 0);
     const maxTotalScore = assignments.reduce((acc, a) => acc + a.weight, 0);
-    return { totalScore: totalScore, maxTotalScore: maxTotalScore };
+    return { totalScore, maxTotalScore };
   };
 
   /**
@@ -95,9 +84,8 @@ export const ClassProvider = ({ children }) => {
       }
       const weightedAssignments = assignments.map((a) => ({ ...a, weight: updatedWeight }));
       return weightedAssignments;
-    } else {
-      return assignments;
     }
+    return assignments;
   };
 
   /**
@@ -108,24 +96,30 @@ export const ClassProvider = ({ children }) => {
    * @param {number} id ID of assignment type assignments are associated with
    * @param {Assignment[]} assignments Updated Assignments
    */
-  const updateAssignments = (id, assignments) => {
-    const at = assignmentTypes[id];
-    const balancedAssignments = balanceWeights(at, assignments, false);
-    const atWeight = getAtWeight(at, balancedAssignments);
-    const { totalScore, maxTotalScore } = getAtScores(balancedAssignments);
-    const updated = {
-      ...at,
-      assignments: balancedAssignments,
-      totalScore: totalScore,
-      maxTotalScore: maxTotalScore,
-      weight: atWeight,
-    };
-    setAssignmentTypes({ ...assignmentTypes, [id]: updated });
-  };
+  const updateAssignments = useCallback(
+    (id, assignments) => {
+      const at = assignmentTypes[id];
+      const balancedAssignments = balanceWeights(at, assignments, false);
+      const atWeight = getAtWeight(at, balancedAssignments);
+      const { totalScore, maxTotalScore } = getAtScores(balancedAssignments);
+      const updated = {
+        ...at,
+        assignments: balancedAssignments,
+        totalScore,
+        maxTotalScore,
+        weight: atWeight,
+      };
+      setAssignmentTypes({ ...assignmentTypes, [id]: updated });
+    },
+    [assignmentTypes, setAssignmentTypes]
+  );
 
-  const addAssignment = (id, assignment) => {
-    updateAssignments(id, [...assignmentTypes[id].assignments, assignment]);
-  };
+  const addAssignment = useCallback(
+    (id, assignment) => {
+      updateAssignments(id, [...assignmentTypes[id].assignments, assignment]);
+    },
+    [assignmentTypes, updateAssignments]
+  );
 
   /**
    *
@@ -134,11 +128,14 @@ export const ClassProvider = ({ children }) => {
    * @param {number} id ID of the associated assignment type
    * @param {number} idx Index of the assignment that is to be removed in the array of assignments
    */
-  const removeAssignment = (id, idx) => {
-    const assignments = assignmentTypes[id].assignments;
-    const updated = assignments.filter((_, i) => i != idx);
-    updateAssignments(id, updated);
-  };
+  const removeAssignment = useCallback(
+    (id, idx) => {
+      const { assignments } = assignmentTypes[id];
+      const updated = assignments.filter((_, i) => i !== idx);
+      updateAssignments(id, updated);
+    },
+    [assignmentTypes, updateAssignments]
+  );
 
   /**
    *
@@ -149,29 +146,38 @@ export const ClassProvider = ({ children }) => {
    * @param {string} name Key of the field to update in the assignment object
    * @param {*} value New value of the $name field
    */
-  const updateAssignment = (id, idx, name, value) => {
-    const assignments = assignmentTypes[id].assignments;
-    const assignment = assignments[idx];
-    const updatedAssignment = { ...assignment, [name]: value };
-    const updatedAssignments = assignments.map((a, i) => {
-      if (i === idx) {
-        return updatedAssignment;
-      }
-      return a;
-    });
-    updateAssignments(id, updatedAssignments);
-  };
+  const updateAssignment = useCallback(
+    (id, idx, name, value) => {
+      const { assignments } = assignmentTypes[id];
+      const assignment = assignments[idx];
+      const updatedAssignment = { ...assignment, [name]: value };
+      const updatedAssignments = assignments.map((a, i) => {
+        if (i === idx) {
+          return updatedAssignment;
+        }
+        return a;
+      });
+      updateAssignments(id, updatedAssignments);
+    },
+    [assignmentTypes, updateAssignments]
+  );
 
-  const addAssignmentType = (newAt) => {
-    const id = newAt.id;
-    setAssignmentTypes({ ...assignmentTypes, [id]: newAt });
-  };
+  const addAssignmentType = useCallback(
+    (newAt) => {
+      const { id } = newAt;
+      setAssignmentTypes({ ...assignmentTypes, [id]: newAt });
+    },
+    [assignmentTypes, setAssignmentTypes]
+  );
 
-  const removeAssignmentType = (id) => {
-    // eslint-disable-next-line no-unused-vars
-    const { [id]: removed, ...updated } = assignmentTypes;
-    setAssignmentTypes(updated);
-  };
+  const removeAssignmentType = useCallback(
+    (id) => {
+      // eslint-disable-next-line no-unused-vars
+      const { [id]: removed, ...updated } = assignmentTypes;
+      setAssignmentTypes(updated);
+    },
+    [assignmentTypes, setAssignmentTypes]
+  );
 
   /**
    *
@@ -181,42 +187,71 @@ export const ClassProvider = ({ children }) => {
    * @param {string} name Key of the field to be updated in the assignment type
    * @param {*} value New value of the $name field
    */
-  const updateAssignmentType = (id, name, value) => {
-    const at = assignmentTypes[id];
-    let updated;
-    if (name === 'weight') {
-      const assignments = balanceWeights(at, at.assignments, false, value);
-      const { totalScore, maxTotalScore } = getAtScores(assignments);
-      updated = {
-        ...at,
-        assignments: assignments,
-        totalScore: totalScore,
-        maxTotalScore: maxTotalScore,
-        [name]: value,
-      };
-    } else if (name == 'lock_weights') {
-      const assignments = balanceWeights(at, at.assignments, value);
-      updated = { ...at, assignments: assignments, [name]: value };
-    } else {
-      updated = { ...at, [name]: value };
-    }
-    setAssignmentTypes({ ...assignmentTypes, [id]: updated });
-  };
+  const updateAssignmentType = useCallback(
+    (id, name, value) => {
+      const at = assignmentTypes[id];
+      let updated;
+      if (name === 'weight') {
+        const assignments = balanceWeights(at, at.assignments, false, value);
+        const { totalScore, maxTotalScore } = getAtScores(assignments);
+        updated = {
+          ...at,
+          assignments,
+          totalScore,
+          maxTotalScore,
+          [name]: value,
+        };
+      } else if (name === 'lock_weights') {
+        const assignments = balanceWeights(at, at.assignments, value);
+        updated = { ...at, assignments, [name]: value };
+      } else {
+        updated = { ...at, [name]: value };
+      }
+      setAssignmentTypes({ ...assignmentTypes, [id]: updated });
+    },
+    [assignmentTypes, setAssignmentTypes]
+  );
 
-  const value = {
-    cls,
-    setCls,
-    assignmentTypes,
-    setAssignmentTypes,
-    updateClass,
-    addAssignmentType,
-    removeAssignmentType,
-    updateAssignmentType,
-    addAssignment,
-    removeAssignment,
-    updateAssignment,
-    warnings,
-  };
+  useEffect(() => {
+    const newScore = assignmentTypes
+      ? Object.values(assignmentTypes).reduce((acc, at) => {
+          if (at && at.assignments) {
+            const { totalScore } = getAtScores(at.assignments);
+            return acc + totalScore;
+          }
+          return acc;
+        }, 0)
+      : 0;
+    const toUpdate = { score: newScore };
+    setCls((prevCls) => ({ ...prevCls, ...toUpdate }));
+  }, [assignmentTypes]);
+
+  const value = useMemo(
+    () => ({
+      cls,
+      setCls,
+      assignmentTypes,
+      setAssignmentTypes,
+      addAssignmentType,
+      removeAssignmentType,
+      updateAssignmentType,
+      addAssignment,
+      removeAssignment,
+      updateAssignment,
+      warnings,
+    }),
+    [
+      cls,
+      assignmentTypes,
+      addAssignment,
+      addAssignmentType,
+      removeAssignment,
+      removeAssignmentType,
+      updateAssignment,
+      updateAssignmentType,
+      warnings,
+    ]
+  );
 
   return <ClassContext.Provider value={value}>{children}</ClassContext.Provider>;
 };

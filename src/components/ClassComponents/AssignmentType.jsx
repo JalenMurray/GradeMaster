@@ -1,14 +1,16 @@
 import { AddCircleOutline, Delete, Lock, LockOpenRounded } from '@mui/icons-material';
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/api';
-import { useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { createAssignment } from '../../graphql/mutations';
 import { listAssignments } from '../../graphql/queries';
 import Assignment from './Assignment';
+import { ClassContext } from '../../context/class';
 
 const client = generateClient();
 
 function AssignmentType({ at }) {
+  const { addAssignment, updateAssignmentType } = useContext(ClassContext);
   const queryClient = useQueryClient();
   const queryKey = [`${at.id}-assignments`];
   const [locked, setLocked] = useState(at.lockWeights);
@@ -19,7 +21,7 @@ function AssignmentType({ at }) {
     maxScore: at.maxScore,
     weight: 0,
   };
-  const { data: assignments } = useQuery({
+  const { data: foundAssignments } = useQuery({
     queryKey,
     queryFn: async () => {
       const result = await client.graphql({
@@ -38,7 +40,7 @@ function AssignmentType({ at }) {
     initialData: undefined,
   });
 
-  const addAssignment = async () => {
+  const createNewAssignment = async () => {
     try {
       await client.graphql({
         query: createAssignment,
@@ -47,7 +49,7 @@ function AssignmentType({ at }) {
         },
         authMode: 'userPool',
       });
-      console.log('ASSIGNMENT ADDED!!');
+      addAssignment(at.id, newAssignment);
     } catch (err) {
       console.error('Error adding assignment', err);
       throw new Error(err.message);
@@ -55,7 +57,7 @@ function AssignmentType({ at }) {
   };
 
   const saveAssignment = useMutation({
-    mutationFn: addAssignment,
+    mutationFn: createNewAssignment,
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey });
       const previousAssignments = queryClient.getQueryData(queryKey);
@@ -70,7 +72,13 @@ function AssignmentType({ at }) {
     },
   });
 
-  if (!assignments) {
+  useEffect(() => {
+    if (foundAssignments) {
+      updateAssignmentType(at.id, 'assignments', foundAssignments);
+    }
+  }, [at, updateAssignmentType, foundAssignments]);
+
+  if (!foundAssignments) {
     return (
       <div className="w-full max-w-4xl flex-grow pt-10">
         <div className="flex flex-col gap-4 w-1/2">
@@ -116,11 +124,12 @@ function AssignmentType({ at }) {
               </tr>
             </thead>
             <tbody>
-              {assignments.map((assignment) => (
-                <tr key={assignment.id}>
-                  <Assignment at={at} assignment={assignment} />
-                </tr>
-              ))}
+              {at.assignments &&
+                at.assignments.map((assignment) => (
+                  <tr key={assignment.id}>
+                    <Assignment at={at} assignment={assignment} />
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

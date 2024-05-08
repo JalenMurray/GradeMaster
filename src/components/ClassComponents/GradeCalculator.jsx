@@ -1,15 +1,18 @@
+import { useContext, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/api';
 import { listAssignmentTypes } from '../../graphql/queries';
 
 import ProgressBar from './ProgressBar';
 import AssignmentType from './AssignmentType';
+import { ClassContext } from '../../context/class';
 
 const client = generateClient();
 
 function GradeCalculator({ cls }) {
+  const { assignmentTypes, setAssignmentTypes } = useContext(ClassContext);
   const queryKey = [`${cls.id}-assignment-types`];
-  const { data: assignmentTypes } = useQuery({
+  const { data: foundAssignmentTypes } = useQuery({
     queryKey,
     queryFn: async () => {
       const result = await client.graphql({
@@ -28,7 +31,18 @@ function GradeCalculator({ cls }) {
     initialData: undefined,
   });
 
-  if (!assignmentTypes) {
+  useEffect(() => {
+    if (foundAssignmentTypes) {
+      setAssignmentTypes(
+        foundAssignmentTypes.reduce((acc, at) => {
+          acc[at.id] = at;
+          return acc;
+        }, {})
+      );
+    }
+  }, [setAssignmentTypes, foundAssignmentTypes]);
+
+  if (!foundAssignmentTypes) {
     return (
       <div className="w-full max-w-4xl flex-grow pt-10">
         <div className="flex flex-col gap-4 w-1/2">
@@ -41,13 +55,14 @@ function GradeCalculator({ cls }) {
     );
   }
 
+  console.log(assignmentTypes);
+
   return (
     <div>
       <ProgressBar score={cls.score} />
       <div className="mt-4 flex flex-col gap-6" id="assignment-types">
-        {assignmentTypes.map((at) => (
-          <AssignmentType at={at} key={at.id} />
-        ))}
+        {assignmentTypes &&
+          Object.values(assignmentTypes).map((at) => <AssignmentType at={at} key={at.id} />)}
       </div>
     </div>
   );
