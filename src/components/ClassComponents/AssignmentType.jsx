@@ -1,8 +1,8 @@
 import { AddCircleOutline, Delete, Lock, LockOpenRounded } from '@mui/icons-material';
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/api';
-import { useContext, useState, useEffect } from 'react';
-import { createAssignment } from '../../graphql/mutations';
+import { useContext, useState } from 'react';
+import { createAssignment, updateAssignment, updateAssignmentType } from '../../graphql/mutations';
 import { listAssignments } from '../../graphql/queries';
 import Assignment from './Assignment';
 import { ClassContext } from '../../context/class';
@@ -10,7 +10,6 @@ import { ClassContext } from '../../context/class';
 const client = generateClient();
 
 function AssignmentType({ at }) {
-  const { addAssignment, updateAssignmentType } = useContext(ClassContext);
   const queryClient = useQueryClient();
   const queryKey = [`${at.id}-assignments`];
   const [locked, setLocked] = useState(at.lockWeights);
@@ -21,7 +20,25 @@ function AssignmentType({ at }) {
     maxScore: at.maxScore,
     weight: 0,
   };
-  const { data: foundAssignments } = useQuery({
+
+  const toggleLockWeights = async () => {
+    try {
+      await client.graphql({
+        query: updateAssignmentType,
+        variables: {
+          input: { id: at.id, lockWeights: !at.lockWeights },
+        },
+        authMode: 'userPool',
+      });
+      setLocked(!locked);
+      console.log('Update Sent');
+    } catch (err) {
+      console.error('Error Toggling Lock Weights', err);
+      throw new Error(err.message);
+    }
+  };
+
+  const { data: assignments } = useQuery({
     queryKey,
     queryFn: async () => {
       const result = await client.graphql({
@@ -49,7 +66,6 @@ function AssignmentType({ at }) {
         },
         authMode: 'userPool',
       });
-      addAssignment(at.id, newAssignment);
     } catch (err) {
       console.error('Error adding assignment', err);
       throw new Error(err.message);
@@ -72,13 +88,7 @@ function AssignmentType({ at }) {
     },
   });
 
-  useEffect(() => {
-    if (foundAssignments) {
-      updateAssignmentType(at.id, 'assignments', foundAssignments);
-    }
-  }, [at, updateAssignmentType, foundAssignments]);
-
-  if (!foundAssignments) {
+  if (!assignments) {
     return (
       <div className="w-full max-w-4xl flex-grow pt-10">
         <div className="flex flex-col gap-4 w-1/2">
@@ -101,7 +111,7 @@ function AssignmentType({ at }) {
               <AddCircleOutline />
               <p>New Assignment</p>
             </button>
-            <button className="btn-secondary class-button" onClick={() => setLocked(!locked)}>
+            <button className="btn-secondary class-button" onClick={toggleLockWeights}>
               {locked ? <LockOpenRounded /> : <Lock />}
               <p>{locked ? 'Unlock Weights' : 'Lock Weights'}</p>
             </button>
@@ -124,12 +134,11 @@ function AssignmentType({ at }) {
               </tr>
             </thead>
             <tbody>
-              {at.assignments &&
-                at.assignments.map((assignment) => (
-                  <tr key={assignment.id}>
-                    <Assignment at={at} assignment={assignment} />
-                  </tr>
-                ))}
+              {assignments.map((assignment) => (
+                <tr key={assignment.id}>
+                  <Assignment at={at} assignment={assignment} />
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

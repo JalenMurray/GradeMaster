@@ -19,6 +19,10 @@
         "sumAssignmentScores": {
           "deploymentBucketName": "amplify-grademaster-main-68c72-deployment",
           "s3Key": "amplify-builds/sumAssignmentScores-594c2b59584e66317842-build.zip"
+        },
+        "balanceAssignmentTypeAssignments": {
+          "deploymentBucketName": "amplify-grademaster-main-68c72-deployment",
+          "s3Key": "amplify-builds/balanceAssignmentTypeAssignments-5636395051626e634546-build.zip"
         }
       },
       "api": {

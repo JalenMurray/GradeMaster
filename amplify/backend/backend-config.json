@@ -70,6 +70,11 @@
     }
   },
   "function": {
+    "balanceAssignmentTypeAssignments": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "sumAssignmentScores": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -77,6 +82,22 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_balanceAssignmentTypeAssignments_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "balanceAssignmentTypeAssignments"
+        }
+      ]
+    },
+    "AMPLIFY_function_balanceAssignmentTypeAssignments_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "balanceAssignmentTypeAssignments"
+        }
+      ]
+    },
     "AMPLIFY_function_sumAssignmentScores_deploymentBucketName": {
       "usedBy": [
         {

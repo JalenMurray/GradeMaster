@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { ClassContext } from '../../context/class';
 
 function Assignment({ at, assignment }) {
+  const { updateAssignmentType } = useContext(ClassContext);
   const [name, setName] = useState(assignment.name);
   const [score, setScore] = useState(assignment.score);
   const [maxScore, setMaxScore] = useState(assignment.maxScore);
