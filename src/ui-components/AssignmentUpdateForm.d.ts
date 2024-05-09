@@ -23,15 +23,15 @@ export declare type ValidationResponse = {
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type AssignmentUpdateFormInputValues = {
     name?: string;
-    score?: string;
-    maxScore?: string;
-    weight?: string;
+    score?: number;
+    maxScore?: number;
+    weight?: number;
 };
 export declare type AssignmentUpdateFormValidationValues = {
     name?: ValidationFunction<string>;
-    score?: ValidationFunction<string>;
-    maxScore?: ValidationFunction<string>;
-    weight?: ValidationFunction<string>;
+    score?: ValidationFunction<number>;
+    maxScore?: ValidationFunction<number>;
+    weight?: ValidationFunction<number>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type AssignmentUpdateFormOverridesProps = {

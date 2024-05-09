@@ -55,8 +55,6 @@ function GradeCalculator({ cls }) {
     );
   }
 
-  console.log(assignmentTypes);
-
   return (
     <div>
       <ProgressBar score={cls.score} />

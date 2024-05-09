@@ -1,9 +1,9 @@
 type Assignment @model @auth(rules: [{allow: owner}]) {
   id: ID!
   name: String!
-  score: String
-  maxScore: String
-  weight: String
+  score: Float
+  maxScore: Float
+  weight: Float
   assignmentType: AssignmentType @hasOne
 }
 

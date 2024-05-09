@@ -10,5 +10,5 @@ export const formatFloat = (num, n) => {
     }
     return parseFloat(num.toFixed(n));
   }
-  return 0;
+  return '';
 };

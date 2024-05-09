@@ -180,9 +180,13 @@ export default function AssignmentUpdateForm(props) {
         label="Score"
         isRequired={false}
         isReadOnly={false}
+        type="number"
+        step="any"
         value={score}
         onChange={(e) => {
-          let { value } = e.target;
+          let value = isNaN(parseFloat(e.target.value))
+            ? e.target.value
+            : parseFloat(e.target.value);
           if (onChange) {
             const modelFields = {
               name,
@@ -207,9 +211,13 @@ export default function AssignmentUpdateForm(props) {
         label="Max score"
         isRequired={false}
         isReadOnly={false}
+        type="number"
+        step="any"
         value={maxScore}
         onChange={(e) => {
-          let { value } = e.target;
+          let value = isNaN(parseFloat(e.target.value))
+            ? e.target.value
+            : parseFloat(e.target.value);
           if (onChange) {
             const modelFields = {
               name,
@@ -234,9 +242,13 @@ export default function AssignmentUpdateForm(props) {
         label="Weight"
         isRequired={false}
         isReadOnly={false}
+        type="number"
+        step="any"
         value={weight}
         onChange={(e) => {
-          let { value } = e.target;
+          let value = isNaN(parseFloat(e.target.value))
+            ? e.target.value
+            : parseFloat(e.target.value);
           if (onChange) {
             const modelFields = {
               name,

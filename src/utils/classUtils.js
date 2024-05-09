@@ -1,18 +1,20 @@
-const balanceWeights = (at, assignments, hardLock, weight) => {
-  if (at.lockWeights || hardLock) {
-    const numAssignments = assignments.length;
-    let updatedWeight;
-    if (weight) {
-      updatedWeight = weight / numAssignments;
-    } else {
-      updatedWeight = at.weight / numAssignments;
-    }
-    const weightedAssignments = assignments.map((a) => ({ ...a, weight: updatedWeight }));
-    return weightedAssignments;
+export const validateAssignment = (name, value) => {
+  if (name === 'name') {
+    const valid = value.length <= 20;
+    return { valid, message: valid ? 'Valid Name' : 'Max length for an assignment name is 20' };
   }
-  return assignments;
+  if (name === 'weight') {
+    const valid = value.length < 4;
+    return { valid, message: valid ? 'Valid Weight' : 'Cannot have 4+ digit weights' };
+  }
+  if (name === 'score' || name === 'maxScore') {
+    const valid = value.length < 5;
+    return { valid, message: valid ? 'Valid Score' : 'Cannot have 5+ digit scores' };
+  }
+  return { valid: false, message: 'Invalid field passed' };
 };
 
-export const getBalancedWeight = (assignments, weight) => {
-  const balancedWeight = weight / assignments.length;
-};
+export const validateAssignmentType = (field, value) => ({
+  valid: false,
+  message: 'Invalid field passed',
+});
