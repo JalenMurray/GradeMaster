@@ -14,6 +14,8 @@ function NewAssignmentTypeForm() {
     maxScore: 100.0,
     weight: 0,
     lockWeights: false,
+    totalScore: 0,
+    maxTotalScore: 0,
   });
   const [queryKey, setQueryKey] = useState(null);
 

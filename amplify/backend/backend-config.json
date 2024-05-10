@@ -70,47 +70,47 @@
     }
   },
   "function": {
-    "balanceAssignmentTypeAssignments": {
+    "getClassScore": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "sumAssignmentScores": {
+    "processAssignmentType": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
   },
   "parameters": {
-    "AMPLIFY_function_balanceAssignmentTypeAssignments_deploymentBucketName": {
+    "AMPLIFY_function_getClassScore_deploymentBucketName": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "balanceAssignmentTypeAssignments"
+          "resourceName": "getClassScore"
         }
       ]
     },
-    "AMPLIFY_function_balanceAssignmentTypeAssignments_s3Key": {
+    "AMPLIFY_function_getClassScore_s3Key": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "balanceAssignmentTypeAssignments"
+          "resourceName": "getClassScore"
         }
       ]
     },
-    "AMPLIFY_function_sumAssignmentScores_deploymentBucketName": {
+    "AMPLIFY_function_processAssignmentType_deploymentBucketName": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "sumAssignmentScores"
+          "resourceName": "processAssignmentType"
         }
       ]
     },
-    "AMPLIFY_function_sumAssignmentScores_s3Key": {
+    "AMPLIFY_function_processAssignmentType_s3Key": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "sumAssignmentScores"
+          "resourceName": "processAssignmentType"
         }
       ]
     }

@@ -16,13 +16,13 @@
         "GradeMaster": {}
       },
       "function": {
-        "sumAssignmentScores": {
+        "processAssignmentType": {
           "deploymentBucketName": "amplify-grademaster-main-68c72-deployment",
-          "s3Key": "amplify-builds/sumAssignmentScores-594c2b59584e66317842-build.zip"
+          "s3Key": "amplify-builds/processAssignmentType-504f6139504a7575492f-build.zip"
         },
-        "balanceAssignmentTypeAssignments": {
+        "getClassScore": {
           "deploymentBucketName": "amplify-grademaster-main-68c72-deployment",
-          "s3Key": "amplify-builds/balanceAssignmentTypeAssignments-7135772b587758546856-build.zip"
+          "s3Key": "amplify-builds/getClassScore-7254685a666f67504f77-build.zip"
         }
       },
       "api": {

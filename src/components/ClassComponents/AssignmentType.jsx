@@ -150,11 +150,14 @@ function AssignmentType({ at }) {
     onBlur: async (field) => {
       if (field !== 'name') {
         const { totalScore, maxTotalScore, weight } = getUpdatedScoreVariables(assignments);
+        const input = { totalScore, maxTotalScore, weight, id: at.id };
+        console.log('Input', input);
+        console.log('WEIGHT', weight);
         try {
           await client.graphql({
             query: updateAssignmentType,
             variables: {
-              input: { id: at.id, totalScore, maxTotalScore, weight },
+              input,
             },
             authMode: 'userPool',
           });
@@ -171,9 +174,38 @@ function AssignmentType({ at }) {
     const { name, value } = e.target;
     const { valid, message } = validateAssignmentType(name, value);
     if (valid) {
-      console.log(message);
+      if (locked && name === 'weight') {
+        const newAssignmentWeight = value / assignments.length;
+        const updatedAssignments = assignments.map((assignment) => ({
+          ...assignment,
+          weight: newAssignmentWeight,
+        }));
+        setAssignments(updatedAssignments);
+        const { totalScore, maxTotalScore } = getUpdatedScoreVariables(updatedAssignments);
+        const updatedAssignmentType = { ...at, [name]: value, totalScore, maxTotalScore };
+        setAssignmentTypes({ ...assignmentTypes, [at.id]: updatedAssignmentType });
+      }
     } else {
       console.error(message);
+    }
+  };
+
+  const handleBlur = async (e) => {
+    const { name, value } = e.target;
+    const input = { id: at.id, [name]: value };
+    console.log(input);
+    try {
+      await client.graphql({
+        query: updateAssignmentType,
+        variables: {
+          input,
+        },
+        authMode: 'userPool',
+      });
+      console.log('Update Sent');
+    } catch (err) {
+      console.error('Error Updating Assignment Type', err);
+      throw new Error(err.message);
     }
   };
 
@@ -205,6 +237,7 @@ function AssignmentType({ at }) {
                   name="weight"
                   value={at.weight}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   className="input input-ghost w-[4.5rem] mx-2 text-xl"
                   type="number"
                 />

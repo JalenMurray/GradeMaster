@@ -68,7 +68,8 @@
       "implicit-arrow-linebreak": 0,
       "react/destructuring-assignment": 0,
       "indent": 0,
-      "jsx-a11y/control-has-associated-label": 0
+      "jsx-a11y/control-has-associated-label": 0,
+      "react/jsx-no-constructed-context-values": 0
     }
   },
   "browserslist": {

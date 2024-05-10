@@ -122,8 +122,8 @@ function Assignment({ assignment, updateAssignmentCallback, weightLocked, assign
           />
         )}
       </td>
-      <td>{formatFloat(weightedScore, 2)}</td>
-      <td>{formatFloat(lostPoints, 2)}</td>
+      <td>{formatFloat(weightedScore, 2) || 0}</td>
+      <td>{formatFloat(lostPoints, 2) || 0}</td>
     </>
   );
 }

@@ -47,12 +47,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "balanceAssignmentTypeAssignments",
+            "processAssignmentType",
             {
               "Fn::Join": [
                 "",
                 [
-                  "balanceAssignmentTypeAssignments",
+                  "processAssignmentType",
                   "-",
                   {
                     "Ref": "env"
@@ -89,12 +89,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "grademasterLambdaRoled9fa18b4",
+            "grademasterLambdaRolebb164bd0",
             {
               "Fn::Join": [
                 "",
                 [
-                  "grademasterLambdaRoled9fa18b4",
+                  "grademasterLambdaRolebb164bd0",
                   "-",
                   {
                     "Ref": "env"
