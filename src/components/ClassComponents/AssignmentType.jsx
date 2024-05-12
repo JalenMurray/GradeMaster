@@ -2,12 +2,21 @@ import { AddCircleOutline, Delete, Lock, LockOpenRounded } from '@mui/icons-mate
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/api';
 import { useContext, useEffect, useState } from 'react';
-import { createAssignment, updateAssignmentType, updateAssignment } from '../../graphql/mutations';
+import {
+  createAssignment,
+  updateAssignmentType,
+  updateAssignment,
+  deleteAssignment,
+} from '../../graphql/mutations';
 import { listAssignments } from '../../graphql/queries';
 import Assignment from './Assignment';
 import { ClassContext } from '../../context/class';
 import { formatFloat } from '../../utils/format';
-import { validateAssignmentType } from '../../utils/classUtils';
+import {
+  validateAssignmentType,
+  getUpdatedAssignmentTypeScores,
+  balanceAssignments,
+} from '../../utils/classUtils';
 
 const client = generateClient();
 
@@ -23,30 +32,10 @@ function AssignmentType({ at }) {
     setLostPoints(at.maxTotalScore - at.totalScore);
   }, [at, setLostPoints]);
 
-  const getUpdatedScoreVariables = (updatedAssignments, newAtWeight) => {
-    const totalScore = updatedAssignments.reduce(
-      (acc, a) => acc + (a.score / a.maxScore) * a.weight,
-      0
-    );
-    const maxTotalScore = updatedAssignments.reduce((acc, a) => {
-      if (typeof a.weight === 'string') {
-        return acc;
-      }
-      return acc + a.weight;
-    }, 0);
-    const weight = at.lockWeights ? newAtWeight || at.weight : maxTotalScore;
-    console.log(weight, newAtWeight);
-    return { totalScore, maxTotalScore, weight };
-  };
-
-  const getBalancedAssignments = (updatedAssignments, atWeight) => {
-    const newWeight = atWeight / updatedAssignments.length;
-    console.log('NEW ASSIGNMENT WEIGHT', newWeight);
-    return updatedAssignments.map((assignment) => ({ ...assignment, weight: newWeight }));
-  };
-
   const updateAssignmentTypeScores = (newAssignments, newAtWeight) => {
-    const { totalScore, maxTotalScore, weight } = getUpdatedScoreVariables(
+    console.log('UPDATING ASSIGNMENT TYPE SCORES', newAssignments, newAtWeight);
+    const { totalScore, maxTotalScore, weight } = getUpdatedAssignmentTypeScores(
+      at,
       newAssignments,
       newAtWeight
     );
@@ -94,26 +83,6 @@ function AssignmentType({ at }) {
     initialData: undefined,
   });
 
-  const saveAssignment = useMutation({
-    mutationFn: async (newAssignment) => {
-      try {
-        await client.graphql({
-          query: createAssignment,
-          variables: {
-            input: newAssignment,
-          },
-          authMode: 'userPool',
-        });
-      } catch (err) {
-        console.error('Error adding assignment', err);
-        throw new Error(err.message);
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey });
-    },
-  });
-
   useEffect(() => {
     if (foundAssignments) {
       setAssignments(foundAssignments);
@@ -137,16 +106,17 @@ function AssignmentType({ at }) {
     );
   }
 
-  const sendBalancedAssignments = async (balancedAssignments) => {
-    const promises = balancedAssignments.map((assignment) =>
-      client.graphql({
+  const balanceServerAssignments = async (balancedAssignments) => {
+    const promises = balancedAssignments.map((assignment) => {
+      console.log('Updating Assignment', assignment.id, assignment.weight);
+      return client.graphql({
         query: updateAssignment,
         variables: {
           input: { id: assignment.id, weight: assignment.weight },
         },
         authMode: 'userPool',
-      })
-    );
+      });
+    });
     try {
       await Promise.all(promises);
       console.log('Balanced Assignments Successfully Sent');
@@ -156,7 +126,7 @@ function AssignmentType({ at }) {
     }
   };
 
-  const updateAssignmentCallback = {
+  const assignmentCallback = {
     onChange: (id, field, toUpdate) => {
       const updatedAssignments = assignments.map((assignment) => {
         if (assignment.id === id) {
@@ -172,7 +142,10 @@ function AssignmentType({ at }) {
     },
     onBlur: async (field) => {
       if (field !== 'name') {
-        const { totalScore, maxTotalScore, weight } = getUpdatedScoreVariables(assignments);
+        const { totalScore, maxTotalScore, weight } = getUpdatedAssignmentTypeScores(
+          at,
+          assignments
+        );
         const input = { totalScore, maxTotalScore, weight, id: at.id };
         try {
           await client.graphql({
@@ -189,6 +162,26 @@ function AssignmentType({ at }) {
         }
       }
     },
+    onDelete: async (id) => {
+      try {
+        await client.graphql({
+          query: deleteAssignment,
+          variables: {
+            input: { id },
+          },
+          authMode: 'userPool',
+        });
+        console.log('Assignment Deleted');
+      } catch (err) {
+        console.error('Error Deleting Assignment', err);
+        throw new Error(err.message);
+      }
+      let removed = assignments.filter((assignment) => assignment.id !== id);
+      if (locked) {
+        removed = balanceAssignments(removed, at.weight);
+      }
+      setAssignments(removed);
+    },
   };
 
   const handleChange = (e) => {
@@ -196,7 +189,7 @@ function AssignmentType({ at }) {
     const { valid, message } = validateAssignmentType(name, value);
     if (valid) {
       if (locked && name === 'weight') {
-        const balancedAssignments = getBalancedAssignments(assignments, value);
+        const balancedAssignments = balanceAssignments(assignments, value);
         setAssignments(balancedAssignments);
         updateAssignmentTypeScores(balancedAssignments, value);
       }
@@ -219,25 +212,11 @@ function AssignmentType({ at }) {
       });
       console.log('Assignment Type Update Sent');
       if (name === 'weight') {
-        sendBalancedAssignments(assignments);
+        balanceServerAssignments(assignments);
       }
     } catch (err) {
       console.error('Error Updating Assignment Type', err);
       throw new Error(err.message);
-    }
-  };
-
-  const clientAddAssignment = (newAssignment) => {
-    const updatedAssignments = [...assignments, newAssignment];
-    console.log('NEW ASSIGNMENTS', updatedAssignments);
-    if (locked) {
-      console.log('ASSIGNMENT WEIGHTS LOCKED.  BALANCING NEW ASSIGNMENTS');
-      const balancedAssignments = getBalancedAssignments(updatedAssignments, at.weight);
-      console.log('BALANCED ASSIGNMENTS', balancedAssignments);
-      setAssignments(balancedAssignments);
-      updateAssignmentTypeScores(balancedAssignments);
-    } else {
-      updateAssignmentTypeScores(updatedAssignments);
     }
   };
 
@@ -249,23 +228,38 @@ function AssignmentType({ at }) {
       maxScore: at.maxScore,
       weight: 0,
     };
-    clientAddAssignment(newAssignment);
+
+    // Client Side Updates
+    let updatedAssignments = [...assignments, newAssignment];
     if (locked) {
-      sendBalancedAssignments(assignments);
-    } else {
-      try {
-        await client.graphql({
-          query: createAssignment,
-          variables: {
-            input: newAssignment,
-          },
-          authMode: 'userPool',
-        });
-      } catch (err) {
-        console.error('Error adding assignment', err);
-        throw new Error(err.message);
-      }
+      updatedAssignments = balanceAssignments(updatedAssignments, at.weight);
     }
+    console.log('NEW ASSIGNMENTS: ', updatedAssignments);
+    setAssignments(updatedAssignments);
+    updateAssignmentTypeScores(updatedAssignments);
+
+    // Server Updates
+    const oldAssignments = updatedAssignments.slice(0, updatedAssignments.length - 1);
+    const balancedAssignment = updatedAssignments[updatedAssignments.length - 1];
+    try {
+      await client.graphql({
+        query: createAssignment,
+        variables: {
+          input: balancedAssignment,
+        },
+        authMode: 'userPool',
+      });
+      console.log('ADDED NEW ASSIGNMENT ');
+    } catch (err) {
+      console.error('Error adding assignment', err);
+      throw new Error(err.message);
+    }
+    if (locked) {
+      balanceServerAssignments(oldAssignments);
+    }
+
+    // Invalidate Queries
+    queryClient.invalidateQueries({ queryKey });
   };
 
   return (
@@ -331,7 +325,7 @@ function AssignmentType({ at }) {
                     assignment={assignment}
                     weightLocked={locked}
                     assignmentsQueryKey={queryKey}
-                    updateAssignmentCallback={updateAssignmentCallback}
+                    callback={assignmentCallback}
                   />
                 </tr>
               ))}

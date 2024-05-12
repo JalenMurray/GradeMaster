@@ -26,6 +26,6 @@ input[type='number'] {
 
 @layer components {
   .class-button {
-    @apply btn rounded-xl flex gap-2 border-white border-2 text-white;
+    @apply btn rounded-xl flex gap-2 text-white;
   }
 }

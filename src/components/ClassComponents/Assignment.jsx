@@ -4,10 +4,11 @@ import { generateClient } from 'aws-amplify/api';
 import { validateAssignment } from '../../utils/classUtils';
 import { updateAssignment } from '../../graphql/mutations';
 import { formatFloat } from '../../utils/format';
+import { Delete } from '@mui/icons-material';
 
 const client = generateClient();
 
-function Assignment({ assignment, updateAssignmentCallback, weightLocked, assignmentsQueryKey }) {
+function Assignment({ assignment, callback, weightLocked, assignmentsQueryKey }) {
   const queryClient = useQueryClient();
   const [weightedScore, setWeightedScore] = useState(
     (assignment.score / assignment.maxScore) * assignment.weight
@@ -37,7 +38,7 @@ function Assignment({ assignment, updateAssignmentCallback, weightLocked, assign
       if (name !== 'name') {
         formatted = formatFloat(value, 2);
       }
-      updateAssignmentCallback.onChange(assignment.id, name, { [name]: formatted });
+      callback.onChange(assignment.id, name, { [name]: formatted });
     } else {
       console.error(message);
     }
@@ -67,7 +68,7 @@ function Assignment({ assignment, updateAssignmentCallback, weightLocked, assign
 
   const handleBlur = async (e) => {
     updateAssignmentMutation.mutate(e.target);
-    updateAssignmentCallback.onBlur(e.target.name);
+    callback.onBlur(e.target.name);
   };
 
   return (
@@ -108,7 +109,9 @@ function Assignment({ assignment, updateAssignmentCallback, weightLocked, assign
       </td>
       <td>
         {weightLocked ? (
-          <span className="input input-ghost w-[4.5rem] mx-2 text-xl">{assignment.weight}</span>
+          <span className="input input-ghost w-[4.5rem] mx-2 text-xl">
+            {formatFloat(assignment.weight, 2)}
+          </span>
         ) : (
           <input
             onFocus={(e) => e.target.select()}
@@ -124,6 +127,14 @@ function Assignment({ assignment, updateAssignmentCallback, weightLocked, assign
       </td>
       <td>{formatFloat(weightedScore, 2) || 0}</td>
       <td>{formatFloat(lostPoints, 2) || 0}</td>
+      <td>
+        <button
+          className="btn btn-error btn-sm text-white"
+          onClick={() => callback.onDelete(assignment.id)}
+        >
+          <Delete />
+        </button>
+      </td>
     </>
   );
 }
