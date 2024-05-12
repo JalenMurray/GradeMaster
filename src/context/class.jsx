@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
 const EMPTY_CLASS = {
   code: '',
@@ -27,33 +27,10 @@ export const ClassProvider = ({ children }) => {
   const [assignmentTypes, setAssignmentTypes] = useState({});
   const [warnings, setWarnings] = useState({});
 
-  /**
-   *
-   * Calculates the total and max total score for an assignment type
-   * based on the updated assignments
-   *
-   * @param {Assignment[]} assignments array of assignments
-   * @returns The new total and max total scores
-   */
-  const getAtScores = (assignments) => {
-    if (!assignments) {
-      return { totalScore: 0, maxSscore: 0 };
-    }
-    const totalScore = assignments.reduce((acc, a) => acc + (a.score / a.maxScore) * a.weight, 0);
-    const maxTotalScore = assignments.reduce((acc, a) => acc + a.weight, 0);
-    return { totalScore, maxTotalScore };
-  };
-
   useEffect(() => {
     console.log('Updating Class Score');
     const newScore = assignmentTypes
-      ? Object.values(assignmentTypes).reduce((acc, at) => {
-          if (at && at.assignments) {
-            const { totalScore } = getAtScores(at.assignments);
-            return acc + totalScore;
-          }
-          return acc;
-        }, 0)
+      ? Object.values(assignmentTypes).reduce((acc, at) => acc + at.totalScore, 0)
       : 0;
     const toUpdate = { score: newScore };
     setCls((prevCls) => ({ ...prevCls, ...toUpdate }));

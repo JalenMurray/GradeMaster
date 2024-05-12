@@ -35,42 +35,9 @@
   },
   "eslintConfig": {
     "extends": [
-      "airbnb",
-      "airbnb/hooks"
-    ],
-    "parserOptions": {
-      "ecmaVersion": 9,
-      "sourceType": "module"
-    },
-    "env": {
-      "node": true,
-      "es6": true
-    },
-    "ignorePatterns": [
-      "src/ui-components/*.js",
-      "src/ui-components/*.jsx",
-      "node_modules/**/*.ts"
-    ],
-    "rules": {
-      "comma-dangle": 0,
-      "react/prop-types": 0,
-      "react/react-in-jsx-scope": 0,
-      "react/button-has-type": 0,
-      "react/jsx-one-expression-per-line": 0,
-      "operator-linebreak": 0,
-      "linebreak-style": 0,
-      "no-unused-vars": 1,
-      "react/function-component-definition": 0,
-      "react/jsx-props-no-spreading": 0,
-      "jsx-a11y/label-has-associated-control": 0,
-      "object-curly-newline": 0,
-      "no-console": 0,
-      "implicit-arrow-linebreak": 0,
-      "react/destructuring-assignment": 0,
-      "indent": 0,
-      "jsx-a11y/control-has-associated-label": 0,
-      "react/jsx-no-constructed-context-values": 0
-    }
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
