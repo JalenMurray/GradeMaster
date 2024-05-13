@@ -58,7 +58,7 @@ function GradeCalculator({ cls }) {
   return (
     <div>
       <ProgressBar score={cls.score} />
-      <div className="mt-4 flex flex-col gap-6" id="assignment-types">
+      <div className="mt-4 mb-[8rem] flex flex-col gap-6" id="assignment-types">
         {assignmentTypes &&
           Object.values(assignmentTypes).map((at) => <AssignmentType at={at} key={at.id} />)}
       </div>

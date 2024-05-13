@@ -163,6 +163,11 @@ function AssignmentType({ at }) {
       }
     },
     onDelete: async (id) => {
+      let removed = assignments.filter((assignment) => assignment.id !== id);
+      if (locked) {
+        removed = balanceAssignments(removed, at.weight);
+      }
+      setAssignments(removed);
       try {
         await client.graphql({
           query: deleteAssignment,
@@ -176,11 +181,7 @@ function AssignmentType({ at }) {
         console.error('Error Deleting Assignment', err);
         throw new Error(err.message);
       }
-      let removed = assignments.filter((assignment) => assignment.id !== id);
-      if (locked) {
-        removed = balanceAssignments(removed, at.weight);
-      }
-      setAssignments(removed);
+      balanceServerAssignments(removed);
     },
   };
 
@@ -257,9 +258,6 @@ function AssignmentType({ at }) {
     if (locked) {
       balanceServerAssignments(oldAssignments);
     }
-
-    // Invalidate Queries
-    queryClient.invalidateQueries({ queryKey });
   };
 
   return (
